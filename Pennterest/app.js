@@ -1,8 +1,11 @@
 
 /**
- * Module dependencies.
+ * app.js: This is the heart of the application, 
+ * which loads all external dependencies and 
+ * spins up the server.
  */
 
+// Module dependencies
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');

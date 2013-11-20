@@ -1,3 +1,5 @@
+/* style.css: general styling for the client-side pages. currently included in index.ejs */
+
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
