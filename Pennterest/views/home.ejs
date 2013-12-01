@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<div id="toolbar">
+PENNTEREST
+<span><form id="search" method="get">
+	<input id="textInput" type="text" size="21" maxlength="120">
+	<input id="searchButton" type="submit" value="search" class="tfbutton">
+</form></span>
+<span id="home">Home</span>
+<span id="profile">Profile</span>
+</div>
+<p>This is <%=user %>'s page</br></p>
+
+<table id="feed">
+<tr>
+<% for(var i = 0; i < pins.length; i++) { %>
+      <% if(i % 4 == 0 && i != 0) { %> </tr><tr> <% } %>
+      <td>
+      <div class="pinDisplay">
+      <img src ="<%= pins[i].CONTENTPATH %>" width="275", height="300" style="border-radius:10px 10px 0px 0px"></br>
+      <span class="userName"><%= pins[i].FIRSTNAME %></span>
+      <span class="boardName"><%= pins[i].BOARDNAME %></span>
+      </div>
+      </td>
+    <% } %>
+</tr>
+</table>
+
