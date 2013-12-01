@@ -16,11 +16,12 @@ a {
 #toolbar{
 background-color:#CC0000;
 width:100%;
-height:35px;
+height:40px;
 box-shadow: -1px 10px 5px #CCCCCC;
 color:#FFFFFF;
-font-size:26px;
+font-size:32px;
 text-align:center;
+font-family: 'Flamenco', cursive;
 }
 
 #search{
@@ -46,13 +47,15 @@ color:#FFFFFF;
 border: solid 1px #0076a3; border-right:0px;
 background-color:#0033CC;
 border-radius:5px;
+font-family: 'Dosis', sans-serif;
 }
 
 #home{
 padding-right:20px;
 float:right;
 color:#FFFFFF;
-font-size:16px;
+font-size:20px;
+font-family: 'Dosis', sans-serif;
 }
 
 #profile{
@@ -60,7 +63,8 @@ padding-left:20px;
 padding-right:10px;
 float:right;
 color:#FFFFFF;
-font-size:16px;
+font-size:20px;
+font-family: 'Dosis', sans-serif;
 }
 
 #feed{
@@ -76,7 +80,8 @@ border-radius:10px;
 border-color:#CCCCCC;
 background-color:#FFFFFF;
 font-family: Arial, Helvetica, sans-serif;
-font-size:17px;
+font-size:20px;
+font-family: 'Dosis', sans-serif;
 }
 
 .userName{
