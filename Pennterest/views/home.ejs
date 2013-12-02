@@ -3,6 +3,22 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <link href='http://fonts.googleapis.com/css?family=Flamenco' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Dosis' rel='stylesheet' type='text/css'>
+    
+    <script>
+    function showPinButton(id, img){
+    	console.log("woah");
+    	document.getElementById
+    	document.getElementById(id).style.visibility='visible';
+    	img.style.opacity='0.8';
+	}
+	
+	function hidePinButton(id, img){
+		console.log("bye");
+		document.getElementById(id).style.visibility='hidden';
+		img.style.opacity='1.0';
+	}
+
+    </script>
 </head>
 
 <div id="toolbar">
@@ -14,15 +30,20 @@ Pennterest
 <span id="home">Home</span>
 <span id="profile">Profile</span>
 </div>
-<p>This is <%=user %>'s page</br></p>
-
 <table id="feed">
 <tr>
 <% for(var i = 0; i < pins.length; i++) { %>
       <% if(i % 4 == 0 && i != 0) { %> </tr><tr> <% } %>
       <td>
       <div class="pinDisplay">
-      <img src ="<%= pins[i].CONTENTPATH %>" width="275", height="300" style="border-radius:10px 10px 0px 0px"></br>
+      <div onmouseover="showPinButton('<%="button" + i%>', this)" onmouseout="hidePinButton('<%="button" + i%>', this)">
+      <img id="<%="img" + i%>" src ="<%= pins[i].CONTENTPATH %>"></br>
+      <button class='pinButton' id="<%="button" + i%>" type="button")">Pin It</button>
+      </div>
+       <% if(pins[i].CAPTION != null) { %> <%= pins[i].CAPTION  %>  <br/> <% } %>
+      <div class="tags">
+      #<%= pins[i].TAGS %>
+      </div>
       <span class="userName"><%= pins[i].FIRSTNAME %></span>
       <span class="boardName"><%= pins[i].BOARDNAME %></span>
       </div>
@@ -30,4 +51,6 @@ Pennterest
     <% } %>
 </tr>
 </table>
+
+
 

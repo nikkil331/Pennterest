@@ -1,7 +1,7 @@
 /**
  * New node file
  */
-var pins = [];
+
 
 var connectData = { 
 		  "hostname": "cis550zne.cbh8gmdnynf7.us-east-1.rds.amazonaws.com", 
@@ -10,8 +10,6 @@ var connectData = {
 		  "database": "PENNZNE" };
 
 var oracle =  require("oracle");
-var pins;
-var name;
 
 function getPins_db(res, id) {
 	  oracle.connect(connectData, function(err, connection) {
@@ -20,18 +18,40 @@ function getPins_db(res, id) {
 	    } else {
 	    	//user's first 5 pins
 	    	var userPins = "(SELECT * FROM " +
-		    "(SELECT c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME FROM PIN p, CONTENT c, USERS u " +
+	    			"(SELECT CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION," +
+	    			"  LISTAGG(TAG, ' ') WITHIN GROUP (ORDER BY TAG) as tags FROM " +
+		    "(SELECT c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG " +
+		    "FROM PIN p, CONTENT c, USERS u, CONTENTTAG ct, TAG t " +
 		    "WHERE p.USERID=" +id+ " AND p.CONTENTID = c.CONTENTID AND u.USERID=" +id +
-						" ORDER BY p.PINID) WHERE ROWNUM <= 5)";
+		    " AND ct.CONTENTID = c.CONTENTID AND t.TAGID = ct.TAGID)" +
+		    " GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION ORDER BY PINID)" +
+		    " WHERE ROWNUM <= 5)";
+	    	console.log(userPins);
 	    	//first 10 pins tagged with user's interests
-	    	var interestsPins = "(SELECT * FROM (SELECT c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME FROM PIN p, CONTENTTAG t, " +
-			"INTERESTED i, USERS u, CONTENT c WHERE p.CONTENTID = t.CONTENTID AND i.TAGID = t.TAGID" +
-			" AND i.USERID =" + id + " AND p.CONTENTID = c.CONTENTID AND u.USERID = p.USERID ORDER BY p.PINID) " +
-					"WHERE ROWNUM <= 10)";
+	    	var interestsPins = "(SELECT * FROM " +
+	    			"(SELECT CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION," +
+	    			" LISTAGG(TAG, ' ') WITHIN GROUP (ORDER BY TAG) as tags FROM " +
+	    			"(SELECT c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG " +
+	    			"FROM PIN p, CONTENTTAG ct1, CONTENTTAG ct2, TAG t, INTERESTED i, USERS u, CONTENT c " +
+	    			"WHERE p.CONTENTID = ct1.CONTENTID AND i.TAGID = ct1.TAGID AND i.USERID =" + id +
+	    					" AND p.CONTENTID = c.CONTENTID AND u.USERID = p.USERID" +
+	    					" AND ct2.CONTENTID = p.CONTENTID AND t.TAGID = ct2.TAGID" +
+	    					" ORDER BY p.PINID) " +
+					" GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION ORDER BY PINID) " +
+					" WHERE ROWNUM <= 10)";
+	    	console.log(interestsPins);
 	    	//first 10 pins of people the user is following
-	    	var followedsPins = "(SELECT * FROM (SELECT c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME FROM PIN p," +
-	    			"CONTENT c, USERS u, FOLLOWING f WHERE f.FOLLOWER = " +id + " AND p.USERID = f.FOLLOWED " +
-	    					"AND p.CONTENTID = c.CONTENTID AND u.USERID = f.FOLLOWED) WHERE ROWNUM <= 10)";
+	    	var followedsPins = "(SELECT * FROM " +
+	    			"(SELECT CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION," +
+	    			"  LISTAGG(TAG, ' #') WITHIN GROUP (ORDER BY TAG) as tags FROM " +
+	    			"(SELECT c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG " +
+	    			"FROM PIN p, CONTENT c, USERS u, FOLLOWING f, CONTENTTAG ct, TAG t " +
+	    			"WHERE f.FOLLOWER = " +id + " AND p.USERID = f.FOLLOWED " +
+	    			"AND p.CONTENTID = c.CONTENTID AND u.USERID = f.FOLLOWED " +
+	    			"AND ct.CONTENTID = c.CONTENTID AND ct.TAGID = t.TAGID) " +
+	    			" GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION ORDER BY PINID)" +
+	    			" WHERE ROWNUM <= 10) ";
+	    	console.log(followedsPins);
 	    	var query = "( " + userPins + " UNION " + interestsPins + " ) UNION " + followedsPins;
 		  	
 	    	connection.execute(query, 
@@ -40,19 +60,9 @@ function getPins_db(res, id) {
 		  	    if ( err ) {
 		  	    	console.log(err);
 		  	    } else {
-		  	    	pins = results;
-		  	    	query = "SELECT FIRSTNAME FROM USERS WHERE USERID =" + id
-				  	connection.execute(query,
-				  			[],
-				  			function(err, results){
-				  		if(err){
-				  			console.log(err);
-				  		} else{
-				  			name = results[0].FIRSTNAME;
-				  			render(res);
-				  			
-				  		}
-				  	});
+		  	    	res.render('home.ejs',
+		  	    			{ pins: results }
+		  			  );
 			    }
 			  }); 
 		  }
@@ -61,13 +71,9 @@ function getPins_db(res, id) {
 		  	
 }
 
-function render(res){
-	res.render('home.ejs',
-			   { user: name,
-			     pins: pins }
-		  );
-}
 
 exports.home = function(req, res){
   getPins_db(res, 1);
 };
+
+
