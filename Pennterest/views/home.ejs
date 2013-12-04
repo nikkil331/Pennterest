@@ -5,18 +5,18 @@
     <link href='http://fonts.googleapis.com/css?family=Dosis' rel='stylesheet' type='text/css'>
     
     <script>
-    function showPinButton(id, img){
-    	console.log("woah");
-    	document.getElementById
-    	document.getElementById(id).style.visibility='visible';
+    function showPinButton(button, rate, img){
+    	document.getElementById(button).style.visibility='visible';
+    	document.getElementById(rate).style.visibility='visible';
     	img.style.opacity='0.8';
 	}
 	
-	function hidePinButton(id, img){
-		console.log("bye");
-		document.getElementById(id).style.visibility='hidden';
+	function hidePinButton(button, rate, img){
+		document.getElementById(button).style.visibility='hidden';
+		document.getElementById(rate).style.visibility='hidden';
 		img.style.opacity='1.0';
 	}
+	
 
     </script>
 </head>
@@ -36,13 +36,32 @@ Pennterest
       <% if(i % 4 == 0 && i != 0) { %> </tr><tr> <% } %>
       <td>
       <div class="pinDisplay">
-      <div onmouseover="showPinButton('<%="button" + i%>', this)" onmouseout="hidePinButton('<%="button" + i%>', this)">
+      <div onmouseover="showPinButton('<%="button" + i%>', '<%="rate" + i%>', this)" 
+      onmouseout="hidePinButton('<%="button" + i%>','<%="rate" + i%>', this)">
       <img id="<%="img" + i%>" src ="<%= pins[i].CONTENTPATH %>"></br>
-      <button class='pinButton' id="<%="button" + i%>" type="button")">Pin It</button>
+      <div class='rate' id="<%="rate" + i%>">
+      <span style="line-height:40px; vertical-align:center">Rate</span>
+      <form class="ratingButtons">
+	  <input type="radio" name="rating" value=1>
+	  <input type="radio" name="rating" value=2>
+	  <input type="radio" name="rating" value=3>
+	  <input type="radio" name="rating" value=4>
+	  <input type="radio" name="rating" value=5>
+	  </form>
       </div>
-       <% if(pins[i].CAPTION != null) { %> <%= pins[i].CAPTION  %>  <br/> <% } %>
+      <button class='pinButton' id="<%="button" + i%>" type="button")">Pin It</button>
+      <div class='description'>
+      <% if(pins[i].CAPTION != null) { %> <%= pins[i].CAPTION %> <% } %>
+      <div class='stars'>
+      <% var rating = pins[i].RATING;
+         if(rating > 5) { rating = 5; } 
+      	for (var j = 0; j < rating; j++) { %>
+      		<span id='<%="star" + j + i %>' class="star"></span>
+      <% } %> 
+      </div>
       <div class="tags">
       #<%= pins[i].TAGS %>
+      </div>
       </div>
       <span class="userName"><%= pins[i].FIRSTNAME %></span>
       <span class="boardName"><%= pins[i].BOARDNAME %></span>
