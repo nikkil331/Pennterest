@@ -220,3 +220,53 @@ margin-right:5px;
 input[type="radio"]{
 margin-right: 5px;
 }
+
+#pinPopup{
+padding:30px;
+position:fixed;
+top:25%;
+left:30%;
+width:40%;
+height:50%;
+background-color:#FFFFFF;
+font-size:26px;
+box-shadow: 5px 10px 5px #222222;
+border-style:ridge;
+border-width:5px;
+border-color:#000000;
+}
+
+#pinPopup input[type="text"]{
+width:80%;
+height:70px;
+}
+
+#pinPopup select{
+width:75%;
+height:25px;
+font-size:24px;
+}
+
+#pinSubmit{
+float:right;
+background: linear-gradient(#E3052A, #BF0826);
+width: 80px;
+height: 40px;
+border-radius: 10px;
+color: #FFFFFF;
+font-size: 20px;
+border-style:none;
+z-index:1;
+}
+
+#pinCancel{
+float:left;
+background: linear-gradient(#E3052A, #BF0826);
+width: 80px;
+height: 40px;
+border-radius: 10px;
+color: #FFFFFF;
+font-size: 20px;
+border-style:none;
+z-index:1;
+}

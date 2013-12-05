@@ -23,6 +23,7 @@ app.set('view engine', 'ejs');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());
+app.use(express.bodyParser());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
@@ -37,9 +38,10 @@ app.get('/', routes.index);
 app.get('/test', test.index);
 app.get('/users', user.list);
 app.get('/home', home.home);
+app.post('/updateRating', home.update);
+app.post('/addPin', home.addPin);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
-
 

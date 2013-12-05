@@ -3,6 +3,8 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <link href='http://fonts.googleapis.com/css?family=Flamenco' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Dosis' rel='stylesheet' type='text/css'>
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'>
+	</script>
     
     <script>
     function showPinButton(button, rate, img){
@@ -16,6 +18,21 @@
 		document.getElementById(rate).style.visibility='hidden';
 		img.style.opacity='1.0';
 	}
+	
+	function submitRating(formID){
+		$(formID).submit();
+	}
+	
+	function pin(i){
+		console.log("pinning");
+		toBePinned = pins[i].PINID;
+		document.getElementById("pinPopup").style.visibility='visible';
+	}
+	
+	function closeWindow(){
+		document.getElementById("pinPopup").style.visibility='hidden';
+	}
+	
 	
 
     </script>
@@ -41,15 +58,18 @@ Pennterest
       <img id="<%="img" + i%>" src ="<%= pins[i].CONTENTPATH %>"></br>
       <div class='rate' id="<%="rate" + i%>">
       <span style="line-height:40px; vertical-align:center">Rate</span>
-      <form class="ratingButtons">
-	  <input type="radio" name="rating" value=1>
-	  <input type="radio" name="rating" value=2>
-	  <input type="radio" name="rating" value=3>
-	  <input type="radio" name="rating" value=4>
-	  <input type="radio" name="rating" value=5>
+      <%var formID = "ratingForm" + i%>
+      <form id=<%=formID%> class="ratingButtons" action="/updateRating" method="POST" target="hidden-iframe">
+	  <input type="radio" name="rating" value="1" onclick="submitRating(<%formID%>)">
+	  <input type="radio" name="rating" value="2" onclick="submitRating(<%=formID%>)">
+	  <input type="radio" name="rating" value="3" onclick="submitRating(<%=formID%>)">
+	  <input type="radio" name="rating" value="4" onclick="submitRating(<%=formID%>)">
+	  <input type="radio" name="rating" value="5" onclick="submitRating(<%=formID%>)">
+	  <input type="text" name="userID" value="<%=userID %>" style="display:none">
+	  <input type="text" name="pinID" value="<%=pins[i].PINID %>" style="display:none">
 	  </form>
       </div>
-      <button class='pinButton' id="<%="button" + i%>" type="button")">Pin It</button>
+      <button class='pinButton' id="<%="button" + i%>" type="button" onclick="pin(<%=i%>)")">Pin It</button>
       <div class='description'>
       <% if(pins[i].CAPTION != null) { %> <%= pins[i].CAPTION %> <% } %>
       <div class='stars'>
@@ -70,6 +90,26 @@ Pennterest
     <% } %>
 </tr>
 </table>
+<% var toBePinned=-1 %>
+<div id="pinPopup" style="visibility:hidden">
+<form action=>
+Choose Board <br/>
+<select>
+<% for(var i = 0; i < boards.length; i++) {
+ 	var bname = boards[i].BOARDNAME; %>
+	<option value="<%=bname%>"><%=bname%></option>
+<% } %>
+</select><br/>
+Description <br/>
+<input type="text" name="description"><br/>
+<input type="text" name="pinID" value="<%=toBePinned%>" style="display:none">
+<br/>
+<br/>
+<button id="pinCancel" type="button" onclick="closeWindow()">Cancel</button>
+<input id="pinSubmit" type="submit" value="Pin" onclick="closeWindow()">
+</form>
+</div>
+<iframe id="hidden-iframe"></iframe>
 
 
 
