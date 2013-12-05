@@ -71,8 +71,6 @@ function getPins_db(res, id) {
 		  	    			function(err, bresults){
 		  	    			if(err) {console.log(err);}
 		  	    			else{
-		  	    				console.log(presults);
-		  	    		    	console.log(bresults);
 		  	    		    	res.render('home.ejs',
 		  	    		    			{userID : id,  
 		  	    		    			 boards : bresults,
@@ -94,6 +92,7 @@ exports.home = function(req, res){
   getPins_db(res, 1);
 };
 
+//adds new rating
 exports.update = function(req, res){
 	oracle.connect(connectData, function(err, connection) {
 	    if ( err ) {
@@ -133,8 +132,37 @@ exports.update = function(req, res){
 		res.end();
 	}
 
+//adds new pin
 exports.addPin = function(req, res){
-	console.log(req.body.PINID);
+	oracle.connect(connectData, function(err, connection) {
+	    if ( err ) {
+	    	console.log(err + " first error");
+	    } else {
+	    	var query = "SELECT CONTENTID FROM PIN WHERE PINID = " + req.body.pinID;
+	    	console.log(query);
+	    	connection.execute(query,
+	    			[],
+	    			function(err, cid){
+	    			if(err) {console.log(err);}
+	    			else{
+	    				console.log(cid);
+	    				query = "INSERT INTO PIN (USERID, CONTENTID, BOARDNAME, CAPTION) VALUES" +
+		    			" (" + req.body.userID + ", " + cid[0]["CONTENTID"] + ", \'" + req.body.boardName + 
+		    			"\', '" + req.body.description + "')";
+	    				console.log(query);
+	    				connection.execute(query,
+	    						[],
+	    						function(err, results){
+	    							if(err) {console.log(err);}
+	    							else{
+	    								connection.close();
+	    								res.end();
+	    							}
+	    						});
+	    				}
+	    			});
+	    	}
+	});
 }
 
 

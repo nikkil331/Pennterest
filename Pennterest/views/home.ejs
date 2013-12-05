@@ -23,9 +23,9 @@
 		$(formID).submit();
 	}
 	
-	function pin(i){
+	function pin(pinID){
 		console.log("pinning");
-		toBePinned = pins[i].PINID;
+		document.getElementById("toBePinned").value =pinID;
 		document.getElementById("pinPopup").style.visibility='visible';
 	}
 	
@@ -69,7 +69,7 @@ Pennterest
 	  <input type="text" name="pinID" value="<%=pins[i].PINID %>" style="display:none">
 	  </form>
       </div>
-      <button class='pinButton' id="<%="button" + i%>" type="button" onclick="pin(<%=i%>)")">Pin It</button>
+      <button class='pinButton' id="<%="button" + i%>" type="button" onclick="pin(<%=pins[i].PINID%>)")">Pin It</button>
       <div class='description'>
       <% if(pins[i].CAPTION != null) { %> <%= pins[i].CAPTION %> <% } %>
       <div class='stars'>
@@ -90,11 +90,10 @@ Pennterest
     <% } %>
 </tr>
 </table>
-<% var toBePinned=-1 %>
 <div id="pinPopup" style="visibility:hidden">
-<form action=>
+<form id="pinForm" action="/addPin" method="POST" target="hidden-iframe">
 Choose Board <br/>
-<select>
+<select name="boardName" form="pinForm">
 <% for(var i = 0; i < boards.length; i++) {
  	var bname = boards[i].BOARDNAME; %>
 	<option value="<%=bname%>"><%=bname%></option>
@@ -102,7 +101,8 @@ Choose Board <br/>
 </select><br/>
 Description <br/>
 <input type="text" name="description"><br/>
-<input type="text" name="pinID" value="<%=toBePinned%>" style="display:none">
+<input id="toBePinned" type="text" name="pinID" style="display:none">
+<input type="text" name="userID" value="<%=userID%>" style="display:none">
 <br/>
 <br/>
 <button id="pinCancel" type="button" onclick="closeWindow()">Cancel</button>
