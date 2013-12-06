@@ -20,6 +20,7 @@
 	}
 	
 	function submitRating(formID){
+		console.log("submitting rating");
 		$(formID).submit();
 	}
 	
@@ -33,18 +34,24 @@
 		document.getElementById("pinPopup").style.visibility='hidden';
 	}
 	
+	function goHome(id){
+	  window.location.href = '/home?userID=' + id;
+	  
+	}
 	
 
     </script>
 </head>
 
+<body>
 <div id="toolbar">
 Pennterest
-<span><form id="search" method="get">
-	<input id="textInput" type="text" size="21" maxlength="120">
+<span><form id="search" action="/search" method="get">
+	<input type="text" name="userID" value="<%=userID %>" style="display:none">
+	<input id="textInput" type="text" size="21" maxlength="120" name="searchterm">
 	<input id="searchButton" type="submit" value="search" class="tfbutton">
 </form></span>
-<span id="home">Home</span>
+<span id="home" onclick="goHome(<%=userID%>)">Home</span>
 <span id="profile">Profile</span>
 </div>
 <% if(pins.length == 0) { %> No Pins to Display <%}%>
@@ -114,6 +121,8 @@ Description <br/>
 </form>
 </div>
 <iframe id="hidden-iframe" style="display:none"></iframe>
+</body>
+</html>
 
 
 

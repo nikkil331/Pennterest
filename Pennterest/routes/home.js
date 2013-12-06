@@ -27,7 +27,7 @@ function getPins_db(res, id) {
 		    "WHERE p.USERID=" +id+ " AND p.CONTENTID = c.CONTENTID AND u.USERID=" +id +
 		    " AND c.CONTENTID = ct.CONTENTID(+) AND ct.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
 		    " GROUP BY c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG)" +
-		    " GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING ORDER BY PINID)" +
+		    " GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING ORDER BY PINID DESC)" +
 		    " WHERE ROWNUM <= 5)";
 	    	console.log(userPins);
 	    	//first 10 pins tagged with user's interests
@@ -41,7 +41,7 @@ function getPins_db(res, id) {
 	    					" AND p.CONTENTID = ct2.CONTENTID(+) AND ct2.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
 	    					" GROUP BY c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG" +
 	    					" ORDER BY p.PINID) " +
-					" GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING ORDER BY PINID) " +
+					" GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING ORDER BY PINID DESC) " +
 					" WHERE ROWNUM <= 10)";
 	    	console.log(interestsPins);
 	    	//first 10 pins of people the user is following
@@ -54,7 +54,7 @@ function getPins_db(res, id) {
 	    			"AND p.CONTENTID = c.CONTENTID AND u.USERID = f.FOLLOWED " +
 	    			"AND c.CONTENTID = ct.CONTENTID(+) AND ct.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
 	    			" GROUP BY c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG) " +
-	    			" GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING ORDER BY PINID)" +
+	    			" GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING ORDER BY PINID DESC)" +
 	    			" WHERE ROWNUM <= 10) ";
 	    	console.log(followedsPins);
 	    	var query = "( " + userPins + " UNION " + interestsPins + " ) UNION " + followedsPins;
@@ -94,9 +94,10 @@ exports.home = function(req, res){
 
 //adds new rating
 exports.update = function(req, res){
+	console.log("updating...");
 	oracle.connect(connectData, function(err, connection) {
 	    if ( err ) {
-	    	console.log(err + " first error");
+	    	console.log(err);
 	    } else {
 	    	var query = "SELECT PINID, USERID FROM PINRATING" +
 	    			" WHERE PINID = " + req.body.pinID + " AND USERID = " + req.body.userID;

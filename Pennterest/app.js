@@ -11,6 +11,7 @@ var routes = require('./routes');
 var user = require('./routes/user');;
 var test = require('./routes/test');
 var home = require('./routes/home');
+var search = require('./routes/search');
 var http = require('http');
 var path = require('path');
 
@@ -38,6 +39,7 @@ app.get('/', routes.index);
 app.get('/test', test.index);
 app.get('/users', user.list);
 app.get('/home', home.home);
+app.get('/search', search.search);
 app.post('/updateRating', home.update);
 app.post('/addPin', home.addPin);
 
