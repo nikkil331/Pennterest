@@ -47,6 +47,7 @@ Pennterest
 <span id="home">Home</span>
 <span id="profile">Profile</span>
 </div>
+<% if(pins.length == 0) { %> No Pins to Display <%}%>
 <table id="feed">
 <tr>
 <% for(var i = 0; i < pins.length; i++) { %>
@@ -70,8 +71,7 @@ Pennterest
 	  </form>
       </div>
       <button class='pinButton' id="<%="button" + i%>" type="button" onclick="pin(<%=pins[i].PINID%>)")">Pin It</button>
-      <div class='description'>
-      <% if(pins[i].CAPTION != null) { %> <%= pins[i].CAPTION %> <% } %>
+      <div class ='description'> 
       <div class='stars'>
       <% var rating = pins[i].RATING;
          if(rating > 5) { rating = 5; } 
@@ -79,9 +79,13 @@ Pennterest
       		<span id='<%="star" + j + i %>' class="star"></span>
       <% } %> 
       </div>
-      <div class="tags">
-      #<%= pins[i].TAGS %>
-      </div>
+      <% if (pins[i].CAPTION != null) { %>
+      <%= pins[i].CAPTION %>
+      <% } else {%>
+      <% if(pins[i].TAGS != null || pins[i].TAGS != undefined) { %>
+      	#<%= pins[i].TAGS %>
+      <% } %>
+      <% } %>
       </div>
       <span class="userName"><%= pins[i].FIRSTNAME %></span>
       <span class="boardName"><%= pins[i].BOARDNAME %></span>
@@ -109,7 +113,7 @@ Description <br/>
 <input id="pinSubmit" type="submit" value="Pin" onclick="closeWindow()">
 </form>
 </div>
-<iframe id="hidden-iframe"></iframe>
+<iframe id="hidden-iframe" style="display:none"></iframe>
 
 
 
