@@ -12,8 +12,12 @@ body {
 a {
   color: #00B7FF;
 }
-
+body{
+font-size: 30px;
+font-family: 'Dosis', sans-serif;
+}
 #toolbar{
+margin-bottom:20px;
 background-color:#CC0000;
 width:100%;
 height:40px;
@@ -51,6 +55,7 @@ font-family: 'Dosis', sans-serif;
 }
 
 #home{
+cursor:pointer;
 padding-right:20px;
 float:right;
 color:#FFFFFF;
@@ -59,6 +64,7 @@ font-family: 'Dosis', sans-serif;
 }
 
 #profile{
+cursor:pointer;
 padding-left:20px;
 padding-right:10px;
 float:right;
@@ -88,6 +94,37 @@ font-size:20px;
 font-family: 'Dosis', sans-serif;
 }
 
+.pinDisplay img{
+background-color: #000000;
+width:100%;
+height:300px;
+overflow:hidden;
+border-radius:10px 10px 0px 0px;
+}
+
+.upinDisplay{
+overflow:hidden;
+position: relative;
+height: 375px;
+width: 300px;
+border-style:solid;
+border-width:1px;
+border-radius:10px;
+border-color:#CCCCCC;
+background-color:#FFFFFF;
+font-family: Arial, Helvetica, sans-serif;
+font-size:20px;
+font-family: 'Dosis', sans-serif;
+}
+
+.upinDisplay img{
+background-color: #000000;
+width:100%;
+height:300px;
+overflow:hidden;
+border-radius:10px 10px 0px 0px;
+}
+
 .description{
 overflow:scroll;
 height:60px;
@@ -101,6 +138,13 @@ border-top-width:0px;
 border-color:#CCCCCC;
 }
 
+.udescription{
+overflow:scroll;
+height:60px;
+width: 300px;
+text-align:center;
+}
+
 .userName{
 float:left;
 padding-left:20px;
@@ -111,14 +155,6 @@ vertical-align:middle
 float:right;
 padding-right:20px;
 vertical-align:middle
-}
-
-.pinDisplay img{
-background-color: #000000;
-width:100%;
-height:300px;
-overflow:hidden;
-border-radius:10px 10px 0px 0px;
 }
 
 .pinButton {
@@ -221,7 +257,7 @@ input[type="radio"]{
 margin-right: 5px;
 }
 
-#pinPopup{
+.popUp{
 padding:30px;
 position:fixed;
 top:25%;
@@ -236,18 +272,18 @@ border-width:5px;
 border-color:#000000;
 }
 
-#pinPopup input[type="text"]{
+.descInput{
 width:80%;
 height:70px;
 }
 
-#pinPopup select{
+.popUp select{
 width:75%;
 height:25px;
 font-size:24px;
 }
 
-#pinSubmit{
+.pinSubmit{
 float:right;
 background: linear-gradient(#E3052A, #BF0826);
 width: 80px;
@@ -259,7 +295,7 @@ border-style:none;
 z-index:1;
 }
 
-#pinCancel{
+.pinCancel{
 float:left;
 background: linear-gradient(#E3052A, #BF0826);
 width: 80px;
@@ -269,4 +305,16 @@ color: #FFFFFF;
 font-size: 20px;
 border-style:none;
 z-index:1;
+}
+
+.addButton{
+background: linear-gradient(#0000FF, #0066FF);
+width: 80px;
+height: 80px;
+border-radius: 50px;
+color: #FFFFFF;
+font-size: 20px;
+border-style:none;
+z-index:1;
+box-shadow: 2px 5px 2px #222222;
 }

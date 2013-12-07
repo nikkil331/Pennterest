@@ -12,8 +12,6 @@ var connectData = {
 var oracle =  require("oracle");
 
 function getPins_db(res, id) {
-	var pinResults = {};
-	var boardResults = {};
 	oracle.connect(connectData, function(err, connection) {
 		if ( err ) {
 			console.log(err);
@@ -28,65 +26,79 @@ function getPins_db(res, id) {
 		    " AND c.CONTENTID = ct.CONTENTID(+) AND ct.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
 		    " GROUP BY c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG)" +
 		    " GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING ORDER BY PINID DESC)" +
-		    " WHERE ROWNUM <= 5)";
+		    " WHERE ROWNUM <= 8)";
 	    	console.log(userPins);
-	    	//first 10 pins tagged with user's interests
-	    	var interestsPins = "(SELECT * FROM " +
-	    			"(SELECT PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING," +
-	    			" LISTAGG(TAG, ' #') WITHIN GROUP (ORDER BY TAG) as tags FROM " +
-	    			"(SELECT c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG, AVG(pr.RATING) as RATING " +
-	    			"FROM PIN p, CONTENTTAG ct1, CONTENTTAG ct2, TAG t, INTERESTED i, USERS u, CONTENT c, PINRATING pr " +
-	    			"WHERE p.CONTENTID = ct1.CONTENTID AND i.TAGID = ct1.TAGID AND i.USERID =" + id +
-	    					" AND p.CONTENTID = c.CONTENTID AND u.USERID = p.USERID" +
-	    					" AND p.CONTENTID = ct2.CONTENTID(+) AND ct2.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
-	    					" GROUP BY c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG" +
-	    					" ORDER BY p.PINID) " +
-					" GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING ORDER BY PINID DESC) " +
-					" WHERE ROWNUM <= 10)";
-	    	console.log(interestsPins);
-	    	//first 10 pins of people the user is following
-	    	var followedsPins = "(SELECT * FROM " +
-	    			"(SELECT PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING, " +
-	    			"  LISTAGG(TAG, ' #') WITHIN GROUP (ORDER BY TAG) as tags FROM " +
-	    			"(SELECT c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG, AVG(pr.RATING) as RATING " +
-	    			"FROM PIN p, CONTENT c, USERS u, FOLLOWING f, CONTENTTAG ct, TAG t, PINRATING pr " +
-	    			"WHERE f.FOLLOWER = " +id + " AND p.USERID = f.FOLLOWED " +
-	    			"AND p.CONTENTID = c.CONTENTID AND u.USERID = f.FOLLOWED " +
-	    			"AND c.CONTENTID = ct.CONTENTID(+) AND ct.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
-	    			" GROUP BY c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG) " +
-	    			" GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING ORDER BY PINID DESC)" +
-	    			" WHERE ROWNUM <= 10) ";
-	    	console.log(followedsPins);
-	    	var query = "( " + userPins + " UNION " + interestsPins + " ) UNION " + followedsPins;
-		  	
-	    	connection.execute(query, 
-		  			   [], 
-		  			   function(err, presults) {
-		  	    if ( err ) {
-		  	    	console.log(err);
-		  	    } else {
-		  	    	query = "SELECT BOARDNAME FROM BOARD WHERE USERID=" + id;
-		  	    	connection.execute(query,
-		  	    			[],
-		  	    			function(err, bresults){
-		  	    			if(err) {console.log(err);}
-		  	    			else{
-		  	    		    	res.render('home.ejs',
-		  	    		    			{userID : id,  
-		  	    		    			 boards : bresults,
-		  	    		    			 pins: presults }
-		  	    				  );
-		  	    				connection.close();
-		  	    			}
-		  	    	});
-			    }
-			  }); 
-	    	
+	    	connection.execute(userPins, [],
+	    	function(err, uresults){
+	    		if(err) {console.log(err); }
+	    		else{
+	    			getSuggestions(uresults, id, connection, res);
+	    		}
+	    	});
 		  }
 	});
 		  	
 }
 
+function getSuggestions(uresults, id, connection,res){
+	//first 10 pins tagged with user's interests
+	var interestsPins = "(SELECT * FROM " +
+			"(SELECT PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING," +
+			" LISTAGG(TAG, ' #') WITHIN GROUP (ORDER BY TAG) as tags FROM " +
+			"(SELECT c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG, AVG(pr.RATING) as RATING " +
+			"FROM PIN p, CONTENTTAG ct1, CONTENTTAG ct2, TAG t, INTERESTED i, USERS u, CONTENT c, PINRATING pr " +
+			"WHERE p.CONTENTID = ct1.CONTENTID AND i.TAGID = ct1.TAGID AND i.USERID =" + id +
+					" AND p.CONTENTID = c.CONTENTID AND u.USERID = p.USERID" +
+					" AND p.CONTENTID = ct2.CONTENTID(+) AND ct2.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
+					" GROUP BY c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG" +
+					" ORDER BY p.PINID) " +
+			" GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING ORDER BY PINID DESC) " +
+			" WHERE ROWNUM <= 10)";
+	console.log(interestsPins);
+	//first 10 pins of people the user is following
+	var followedsPins = "(SELECT * FROM " +
+			"(SELECT PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING, " +
+			"  LISTAGG(TAG, ' #') WITHIN GROUP (ORDER BY TAG) as tags FROM " +
+			"(SELECT c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG, AVG(pr.RATING) as RATING " +
+			"FROM PIN p, CONTENT c, USERS u, FOLLOWING f, CONTENTTAG ct, TAG t, PINRATING pr " +
+			"WHERE f.FOLLOWER = " +id + " AND p.USERID = f.FOLLOWED " +
+			"AND p.CONTENTID = c.CONTENTID AND u.USERID = f.FOLLOWED " +
+			"AND c.CONTENTID = ct.CONTENTID(+) AND ct.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
+			" GROUP BY c.CONTENTPATH, u.FIRSTNAME, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG) " +
+			" GROUP BY PINID, CONTENTPATH, FIRSTNAME, BOARDNAME, CAPTION, RATING ORDER BY PINID DESC)" +
+			" WHERE ROWNUM <= 10) ";
+	console.log(followedsPins);
+	var query = "( " + interestsPins + " ) UNION (" + followedsPins + " )";
+  	
+	connection.execute(query, 
+  			   [], 
+  		function(err, presults) {
+  	    if ( err ) {
+  	    	console.log(err);
+  	    } else {
+  	    	getBoardNames(uresults, presults, id, connection, res)
+	    }
+	  }); 
+}
+
+function getBoardNames(uresults, presults, id, connection, res){
+	query = "SELECT BOARDNAME FROM BOARD WHERE USERID=" + id;
+  	connection.execute(query,
+  			[],
+  			function(err, bresults){
+  			if(err) {console.log(err);}
+  			else{
+  		    	res.render('home.ejs',
+  		    			{userID : id,  
+  		    			 boards : bresults,
+  		    			 pins: presults,
+  		    			 upins : uresults
+  		    			}
+  				  );
+  				connection.close();
+  			}
+  	});
+}
 
 exports.home = function(req, res){
   getPins_db(res, 109);
@@ -134,7 +146,7 @@ exports.update = function(req, res){
 	}
 
 //adds new pin
-exports.addPin = function(req, res){
+exports.pinExisting = function(req, res){
 	var description = req.body.description;
 	tags = getTags(description);
 	console.log(tags);
@@ -203,6 +215,7 @@ function addTags (data){
 	for(var i = 0; i < data["tags"].length; i++){
 		getTagId(data, i);
 	}
+	data["response"].end();
 }
 
 function getTagId(data, index){
@@ -211,17 +224,18 @@ function getTagId(data, index){
 	console.log(query);
 	data["connection"].execute(query, [], 
 	function(err, results){
+		console.log(results);
 		if(err) {console.log(err);}
-		if(results.length > 1){
-			insertContentTag(data, results[0]["TAGID"]);
+		if(results.length > 0){
+			insertContentTag(data, results[0]["TAGID"], index);
 		}
 		else{
-			insertTag(data, data["tags"][index]);
+			insertTag(data, data["tags"][index], index);
 		}
 	});
 }
 
-function insertContentTag (data, tagid){
+function insertContentTag (data, tagid, index){
 	console.log('inserting content tag');
 	query = "INSERT INTO CONTENTTAG (TAGID, CONTENTID) VALUES (" + tagid +
 			", " + data["contentid"] + ")";
@@ -230,35 +244,86 @@ function insertContentTag (data, tagid){
 			[],
 	function(err,insertRes){
 		if(err) {console.log(err);}
-		data["connection"].close();
-		data["response"].end();
-	});
-}
-
-function insertTag(data, tag){
-	query = "INSERT INTO TAG (TAGID, TAG) VALUES (seq_tag_id.nextval, '" +
-	tag + "')";
-	console.log(query);
-	data["connection"].execute(query,
-	[],
-	function(err, insertRes){
-		if(err) {console.log(err);}
-		else{
-			query = "INSERT INTO CONTENTTAG (TAGID, CONTENTID) VALUES (" + 
-			"(SELECT seq_tag_id.currval FROM dual), " + data["contentid"];
-			console.log(query);
-			data["connection"].execute(query,
-			[],
-			function(err, results){
-				if(err) { console.log(err); }
-				data["connection"].close();
-	    		data["response"].end();
-			});
+		if(index == data["tags"].length){
+			data["connection"].close();
 		}
 	});
 }
 
+function insertTag(data, tag, index){
+	//start a new connection for each tag so I can use currval (gives last used value per session)
+	oracle.connect(connectData, function(err, connection){
+		query = "INSERT INTO TAG (TAGID, TAG) VALUES (seq_tag_id.nextval, '" +
+		tag + "')";
+		console.log(query);
+		connection.execute(query,
+		[],
+		function(err, insertRes){
+			console.log(insertRes);
+			if(err) {console.log(err);}
+			else{
+				console.log(insertRes);
+				query = "INSERT INTO CONTENTTAG (TAGID, CONTENTID) VALUES (seq_tag_id.currval, " + data["contentid"] + ")";
+				console.log(query);
+				connection.execute(query,
+				[],
+				function(err, results){
+					if(err) { console.log(err); }
+					connection.close();
+					if(index == data["tags"].length){
+						data["connection"].close();
+					}
+				});
+			}
+		});
+	})
+}
 
+exports.pinNewContent = function(req, res){
+	var boardName = req.body.boardName;
+	var userID = req.body.userID;
+	var url = req.body.url;
+	var description = req.body.description;
+	oracle.connect(connectData, function(err, connection){
+		var query = "SELECT p.PINID FROM PIN p, CONTENT c WHERE c.CONTENTPATH = '" + url + 
+		"' AND p.CONTENTID=c.CONTENTID";
+		console.log(query);
+		connection.execute(query, [], function(err, results){
+			if(err) {console.log(err + " first err");}
+			else{
+				//new content
+				if(results.length == 0){
+					console.log("new content");
+					addContent(req, res, connection);
+				}
+				//old content, use pinExisting()
+				else{
+					console.log("old content");
+					var body = {};
+					body["boardName"] = boardName;
+					body["description"] = description;
+					body["userID"] = userID;
+					body["pinID"] = results[0].PINID;
+					var data = {"body" : body};
+					pinExisting(data, res);
+				}
+			}
+		})
+ 	})
+}
+
+function addContent(req, res, connection){
+	var query = "INSERT INTO CONTENT (CONTENTID, CONTENTPATH) VALUES (seq_content_id.nextval, " + req.body.url + ")";
+	connection.execute(query, [], function(err, results){
+		if(err) {console.log(err + " second err");}
+		else{
+			var tags = getTags(req.body.description);
+			var data = {"contentid":results[0]["seq_content_id.currval"], "userid":req.body.userID, "boardname":req.body.boardName, 
+					"description":req.body.description, "tags":tags, "connection":connection, "response":res};
+			pinContent(data);
+		}
+	});
+}
 
 
 

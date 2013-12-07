@@ -19,16 +19,6 @@
 		img.style.opacity='1.0';
 	}
 	
-	function showRating(rate, img){
-		document.getElementById(rate).style.visibility='visible';
-    	img.style.opacity='0.8';
-	}
-	
-	function hideRating(rate, img){
-		document.getElementById(rate).style.visibility='hidden';
-		img.style.opacity='1.0';
-	}
-	
 	function submitRating(formID){
 		console.log("submitting rating");
 		$(formID).submit();
@@ -64,52 +54,6 @@ Pennterest
 <span id="home" onclick="goHome(<%=userID%>)">Home</span>
 <span id="profile">Profile</span>
 </div>
-<% if(upins.length == 0) { %> You Have No Recent Pins to Display 
-<%} else {%>
-<center>Your Recent Pins</center>
-<% } %>
-<table id="upins">
-<tr>
-<% for(var i = 0; i < upins.length; i++) { %>
-<% if(i % 4 == 0 && i != 0) { %> </tr><tr> <% } %>
-<td>
-<div class="upinDisplay">
-      <div onmouseover="showRating('<%="urate" + i%>', this)" 
-      onmouseout="hideRating('<%="urate" + i%>', this)">
-      <img id="<%="uimg" + i%>" src ="<%= upins[i].CONTENTPATH %>"></br>
-      <div class='rate' id="<%="urate" + i%>">
-      <span style="line-height:40px; vertical-align:center">Rate</span>
-      <%var formID = "uratingForm" + i%>
-      <form id=<%=formID%> class="ratingButtons" action="/updateRating" method="POST" target="hidden-iframe">
-	  <input type="radio" name="rating" value="1" onclick="submitRating(<%formID%>)">
-	  <input type="radio" name="rating" value="2" onclick="submitRating(<%=formID%>)">
-	  <input type="radio" name="rating" value="3" onclick="submitRating(<%=formID%>)">
-	  <input type="radio" name="rating" value="4" onclick="submitRating(<%=formID%>)">
-	  <input type="radio" name="rating" value="5" onclick="submitRating(<%=formID%>)">
-	  <input type="text" name="userID" value="<%=userID %>" style="display:none">
-	  <input type="text" name="pinID" value="<%=upins[i].PINID %>" style="display:none">
-	  </form>
-      </div>
-      <div class ='udescription'> 
-      <div class='stars'>
-      <% var rating = upins[i].RATING;
-         if(rating > 5) { rating = 5; } 
-      	for (var j = 0; j < rating; j++) { %>
-      		<span class="star"></span>
-      <% } %> 
-      </div>
-      <% if (upins[i].CAPTION != null) { %>
-      <%= upins[i].CAPTION %>
-      <% } else {%>
-      <% if(upins[i].TAGS != null || upins[i].TAGS != undefined) { %>
-      	#<%= upins[i].TAGS %>
-      <% } %>
-      <% } %>
-</td>
-<% } %>
-</tr>
-</table><br/><br/>
-<center>Suggestions<br/><br/></center>
 <table id="feed">
 <tr>
 <% for(var i = 0; i < pins.length; i++) { %>
