@@ -1,0 +1,326 @@
+/* style.css: general styling for the client-side pages. currently included in index.ejs */
+html, body{
+  margin:0;
+  padding:0;
+  background-color:#EEEEEE;
+}
+
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+body{
+font-size: 30px;
+font-family: 'Dosis', sans-serif;
+}
+#toolbar{
+margin-bottom:20px;
+background-color:#CC0000;
+width:100%;
+height:40px;
+box-shadow: -1px 10px 5px #CCCCCC;
+color:#FFFFFF;
+font-size:32px;
+text-align:center;
+font-family: 'Flamenco', cursive;
+}
+
+#search{
+padding-left:10px;
+float:left;
+}
+
+#textInput{
+margin: 0;
+font-family: Arial, Helvetica, sans-serif;
+font-size:14px;
+border:1px solid #0076a3; border-right:0px;
+}
+
+#searchButton{
+margin: 0;
+font-family: Arial, Helvetica, sans-serif;
+font-size:14px;
+outline: none;
+cursor: pointer;
+text-align: center;
+color:#FFFFFF;
+border: solid 1px #0076a3; border-right:0px;
+background-color:#0033CC;
+border-radius:5px;
+font-family: 'Dosis', sans-serif;
+}
+
+#home{
+cursor:pointer;
+padding-right:20px;
+float:right;
+color:#FFFFFF;
+font-size:20px;
+font-family: 'Dosis', sans-serif;
+}
+
+#profile{
+cursor:pointer;
+padding-left:20px;
+padding-right:10px;
+float:right;
+color:#FFFFFF;
+font-size:20px;
+font-family: 'Dosis', sans-serif;
+}
+
+#feed{
+margin-left:auto;
+margin-right:auto;
+padding-top: 25px;
+}
+
+.pinDisplay{
+overflow:hidden;
+position: relative;
+height: 400px;
+width: 300px;
+border-style:solid;
+border-width:1px;
+border-radius:10px;
+border-color:#CCCCCC;
+background-color:#FFFFFF;
+font-family: Arial, Helvetica, sans-serif;
+font-size:20px;
+font-family: 'Dosis', sans-serif;
+}
+
+.pinDisplay img{
+background-color: #000000;
+width:100%;
+height:300px;
+overflow:hidden;
+border-radius:10px 10px 0px 0px;
+}
+
+.upinDisplay{
+overflow:hidden;
+position: relative;
+height: 375px;
+width: 300px;
+border-style:solid;
+border-width:1px;
+border-radius:10px;
+border-color:#CCCCCC;
+background-color:#FFFFFF;
+font-family: Arial, Helvetica, sans-serif;
+font-size:20px;
+font-family: 'Dosis', sans-serif;
+}
+
+.upinDisplay img{
+background-color: #000000;
+width:100%;
+height:300px;
+overflow:hidden;
+border-radius:10px 10px 0px 0px;
+}
+
+.description{
+overflow:scroll;
+height:60px;
+width: 300px;
+text-align:center;
+border-style:solid;
+border-width:1px;  
+border-left-width:0px;
+border-right-width:0px;
+border-top-width:0px;
+border-color:#CCCCCC;
+}
+
+.udescription{
+overflow:scroll;
+height:60px;
+width: 300px;
+text-align:center;
+}
+
+.userName{
+float:left;
+padding-left:20px;
+vertical-align:middle
+}
+
+.boardName{
+float:right;
+padding-right:20px;
+vertical-align:middle
+}
+
+.pinButton {
+	visibility:hidden;
+	position: absolute;
+	top: 100px;
+	left: 115px;
+	background: linear-gradient(#0000FF, #0066FF);
+	width: 80px;
+	height: 80px;
+	border-radius: 10px;
+	color: #FFFFFF;
+	font-size: 20px;
+	border-style:none;
+	z-index:1;
+	box-shadow: 5px 10px 5px #222222;
+}
+
+.rate{
+padding-top:10px;
+padding-left:5px;
+visibility:hidden;
+position:absolute;
+top:0px;
+left:0px;
+border-radius:10px 10px 0px 0px;
+width:100%;
+height:40px;
+background-color:#555555;
+opacity:0.8;
+color:#FFFFFF;
+font-size:24px;
+}
+
+.star {
+   margin:0px;
+   position: relative;
+   display: inline-block;
+   color: red;
+   width: 0px;
+   height: 0px;
+   border-right:  12.5px solid transparent;
+   border-bottom: 9px  solid red;
+   border-left:   12.5px solid transparent;
+   -moz-transform:    rotate(35deg);
+   -webkit-transform: rotate(35deg);
+   -ms-transform:     rotate(35deg);
+   -o-transform:      rotate(35deg);
+}
+.star:before {
+   border-bottom: 8px solid red;
+   border-left: 4px solid transparent;
+   border-right: 4px solid transparent;
+   position: absolute;
+   height: 0;
+   width: 0;
+   top: -5px;
+   left: -8px;
+   display: inline-block;
+   content: '';
+   -webkit-transform: rotate(-35deg);
+   -moz-transform:    rotate(-35deg);
+   -ms-transform:     rotate(-35deg);
+   -o-transform:      rotate(-35deg);
+
+}
+.star:after {
+   position: absolute;
+   display: inline-block;
+   color: red;
+   top: 0.375px;
+   left: -13.25px;
+   width: 0px;
+   height: 0px;
+   border-right: 12.5px solid transparent;
+   border-bottom: 9px solid red;
+   border-left: 12.5px solid transparent;
+   -webkit-transform: rotate(-70deg);
+   -moz-transform:    rotate(-70deg);
+   -ms-transform:     rotate(-70deg);
+   -o-transform:      rotate(-70deg);
+   content: '';
+}
+
+.stars{
+margin-top:0;
+margin-bottom:0;
+margin-left:auto;
+margin-right:auto;
+}
+
+.ratingButtons{
+line-height:40px;
+vertical-align:center;
+display:inline-block;
+float:right;
+margin-right:5px;
+}
+input[type="radio"]{
+margin-right: 5px;
+}
+
+.popUp{
+padding:30px;
+position:fixed;
+top:25%;
+left:30%;
+width:40%;
+height:50%;
+background-color:#FFFFFF;
+font-size:26px;
+box-shadow: 5px 10px 5px #222222;
+border-style:solid;
+border-width:5px;
+border-color:#000000;
+}
+
+.descInput{
+width:80%;
+height:70px;
+}
+
+.popUp select{
+width:75%;
+height:25px;
+font-size:24px;
+}
+
+.pinSubmit{
+margin-top:5px;
+position:relative;
+float:right;
+background: linear-gradient(#E3052A, #BF0826);
+width: 80px;
+height: 40px;
+border-radius: 10px;
+color: #FFFFFF;
+font-size: 20px;
+border-style:none;
+z-index:1;
+}
+
+.pinCancel{
+margin-top:5px;
+position: relative;
+float:left;
+background: linear-gradient(#E3052A, #BF0826);
+width: 80px;
+height: 40px;
+border-radius: 10px;
+color: #FFFFFF;
+font-size: 20px;
+border-style:none;
+z-index:1;
+}
+
+.addButton{
+margin-top:5px;
+float:right;
+background: linear-gradient(#0000FF, #0066FF);
+width: 25px;
+height: 25px;
+border-radius: 5px;
+color: #FFFFFF;
+font-size: 20px;
+border-style:none;
+z-index:1;
+box-shadow: 2px 5px 2px #222222;
+}
