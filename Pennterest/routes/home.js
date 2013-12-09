@@ -313,14 +313,23 @@ exports.pinNewContent = function(req, res){
 }
 
 function addContent(req, res, connection){
-	var query = "INSERT INTO CONTENT (CONTENTID, CONTENTPATH) VALUES (seq_content_id.nextval, " + req.body.url + ")";
+	var query = "INSERT INTO CONTENT (CONTENTID, CONTENTPATH) VALUES (seq_content_id.nextval, '" + req.body.url + "')";
+	console.log(query);
 	connection.execute(query, [], function(err, results){
 		if(err) {console.log(err + " second err");}
 		else{
 			var tags = getTags(req.body.description);
-			var data = {"contentid":results[0]["seq_content_id.currval"], "userid":req.body.userID, "boardname":req.body.boardName, 
-					"description":req.body.description, "tags":tags, "connection":connection, "response":res};
-			pinContent(data);
+			query = "SELECT seq_content_id.currval FROM DUAL";
+			console.log(query);
+			connection.execute(query, [], function(err, cid){
+				if(err) {console.log(err);}
+				else{
+					console.log(cid);
+					var data = {"contentid":cid[0]["CURRVAL"], "userid":req.body.userID, "boardname":req.body.boardName, 
+						"description":req.body.description, "tags":tags, "connection":connection, "response":res};
+					pinContent(data);
+				}
+			});
 		}
 	});
 }

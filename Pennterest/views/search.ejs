@@ -53,9 +53,11 @@ Pennterest
 </form></span>
 <span id="home" onclick="goHome(<%=userID%>)">Home</span>
 <span id="profile">Profile</span>
+<span style="font-size:26px"><button type="button" class="addButton" onclick="newPin()">+</button></span>
 </div>
 <table id="feed">
 <tr>
+<% if(pins.length == 0) { %> No Results <% } %>
 <% for(var i = 0; i < pins.length; i++) { %>
       <% if(i % 4 == 0 && i != 0) { %> </tr><tr> <% } %>
       <td>

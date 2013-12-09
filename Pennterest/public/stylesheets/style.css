@@ -284,6 +284,8 @@ font-size:24px;
 }
 
 .pinSubmit{
+margin-top:5px;
+position:relative;
 float:right;
 background: linear-gradient(#E3052A, #BF0826);
 width: 80px;
@@ -296,6 +298,8 @@ z-index:1;
 }
 
 .pinCancel{
+margin-top:5px;
+position: relative;
 float:left;
 background: linear-gradient(#E3052A, #BF0826);
 width: 80px;
@@ -308,10 +312,12 @@ z-index:1;
 }
 
 .addButton{
+margin-top:5px;
+float:right;
 background: linear-gradient(#0000FF, #0066FF);
-width: 80px;
-height: 80px;
-border-radius: 50px;
+width: 25px;
+height: 25px;
+border-radius: 5px;
 color: #FFFFFF;
 font-size: 20px;
 border-style:none;
