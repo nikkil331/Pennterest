@@ -1,15 +1,65 @@
 <!DOCTYPE html>
 <head>
-	<title><%= title %></title>
+	<title>Pennterest Login</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'>
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+    <script type='text/javascript' src='/js/jquery.validate.js'></script>
+	<script>
+	$().ready(function() {
+		$("#signupForm").validate({
+			rules: {
+				firstname: "required",
+				lastname: "required",
+				password: {
+					required: true,
+					minlength: 5
+				},
+				email: {
+					required: true,
+					email: true
+				}
+			}
+		});
+		$("#reg").click(function () {
+			$("#loginbox").css("display","none");
+			$("#regbox").css("display","block");
+		});
+	});
 	</script>
 </head>
 <body>
-	<div style="border:solid 1px green">
+	<div id="loginbox" style="border:solid 1px green">
   		<h1>Pennterest Login</h1>
-  		<input type="text">
-  		
+  		Email: <input type="text" /> <br />
+  		Password: <input type="password" /> <br />
+  		<a id="reg">Register</a>
+	</div>
+	<div id="regbox" style="display:none">
+  		<h1>Register</h1>
+  		<form class="cmxform" id="signupForm" method="get" action="">
+		<fieldset>
+			<legend>Validating a complete form</legend>
+			<p>
+				<label for="firstname">Firstname</label>
+				<input id="firstname" name="firstname" type="text" />
+			</p>
+			<p>
+				<label for="lastname">Lastname</label>
+				<input id="lastname" name="lastname" type="text" />
+			</p>
+			<p>
+				<label for="password">Password</label>
+				<input id="password" name="password" type="password" />
+			</p>
+			<p>
+				<label for="email">Email</label>
+				<input id="email" name="email" type="email" />
+			</p>
+			<p>
+				<input class="submit" type="submit" value="Submit"/>
+			</p>
+		</fieldset>
+		</form>
 	</div>
 </body>
 </html>

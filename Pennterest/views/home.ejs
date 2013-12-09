@@ -40,8 +40,15 @@
 		document.getElementById("pinPopup").style.visibility='visible';
 	}
 	
+	function newPin(){
+		console.log("pinning");
+		document.getElementById("newPinPopup").style.visibility='visible';
+	}
+	
 	function closeWindow(){
 		document.getElementById("pinPopup").style.visibility='hidden';
+		//closing both because I was too lazy to make a method specific to the "newpin" version
+		document.getElementById("newPinPopup").style.visibility='hidden';
 	}
 	
 	function goHome(id){
@@ -63,6 +70,7 @@ Pennterest
 </form></span>
 <span id="home" onclick="goHome(<%=userID%>)">Home</span>
 <span id="profile">Profile</span>
+<span style="font-size:26px"><button type="button" class="addButton" onclick="newPin()">+</button></span>
 </div>
 <% if(upins.length == 0) { %> You Have No Recent Pins to Display 
 <%} else {%>
@@ -175,6 +183,27 @@ Description <br/>
 <input class="pinSubmit" type="submit" value="Pin" onclick="closeWindow()">
 </form>
 </div>
+
+<div class="popUp" id="newPinPopup" style="visibility:hidden">
+<form id="newPinForm" action="/pinNewContent" method="POST" target="hidden-iframe">
+Choose Board <br/>
+<select name="boardName" form="newPinForm">
+<% for(var i = 0; i < boards.length; i++) {
+ 	var bname = boards[i].BOARDNAME; %>
+	<option value="<%=bname%>"><%=bname%></option>
+<% } %>
+</select><br/>
+URL <br/>
+<input style="width:80%;" type="text" name="url"><br/>
+Description <br/>
+<input class="descInput" type="text" name="description"><br/>
+<input type="text" name="userID" value="<%=userID%>" style="display:none">
+<span></span>
+<button class="pinCancel" type="button" onclick="closeWindow()">Cancel</button>
+<input class="pinSubmit" type="submit" value="Pin" onclick="closeWindow()">
+</form>
+</div>
+
 <iframe id="hidden-iframe" style="display:none"></iframe>
 </body>
 </html>

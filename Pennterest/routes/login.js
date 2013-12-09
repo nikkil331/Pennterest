@@ -9,7 +9,7 @@ var oracle =  require("oracle");
 
 
 exports.login = function(req, res){
-	if (true /*usr logged in*/) {
+	if (false /*usr logged in*/) {
 		res.redirect('/home');
 	}
 	else {
