@@ -42,6 +42,7 @@ exports.getBoardContent = function(req, res){
 				  		    			{userID : suserID,  
 				  		    			 boards : bresults,
 				  		    			 pins: cresults,
+				  		    			 boardName: boardName
 				  		    			}
 				  				  );
 				  				connection.close();

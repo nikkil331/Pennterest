@@ -101,7 +101,7 @@ function getBoardNames(uresults, presults, id, connection, res){
 }
 
 exports.home = function(req, res){
-  getPins_db(res, 109);
+  getPins_db(res, 111);
 };
 
 //adds new rating
