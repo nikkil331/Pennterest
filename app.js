@@ -13,7 +13,6 @@ var board = require('./routes/board');
 var test = require('./routes/test');
 var home = require('./routes/home');
 var search = require('./routes/search');
-var login = require('./routes/login');
 var http = require('http');
 var path = require('path');
 
@@ -39,10 +38,10 @@ if ('development' === app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/test', test.index);
-app.get('/users', user.list);
+app.get('/user', user.user);
 app.get('/home', home.home);
 app.get('/search', search.search);
-app.get('/login', login.login);
+app.post('/addBoard', user.addNewBoard);
 app.get('/board', board.getBoardContent);
 app.post('/updateRating', home.update);
 app.post('/pinExisting', home.pinExisting);
