@@ -24,15 +24,31 @@
 		$(formID).submit();
 	}
 	
-	function pin(pinID){
-		console.log("pinning");
-		document.getElementById("toBePinned").value =pinID;
-		document.getElementById("pinPopup").style.visibility='visible';
+	function pin(pinID, numBoards){
+		if(numBoards == 0){
+			document.getElementById("noBoardMessage").style.visibility='visible';
+		}
+		else{
+			document.getElementById("toBePinned").value =pinID;
+			document.getElementById("pinPopup").style.visibility='visible';
+		}
+	}
+	
+	function newPin(numBoards){
+		if(numBoards == 0){
+			document.getElementById("noBoardMessage").style.visibility='visible';
+		}
+		else{
+			document.getElementById("newPinPopup").style.visibility='visible';
+		}
 	}
 	
 	
 	function closeWindow(){
 		document.getElementById("pinPopup").style.visibility='hidden';
+		//closing both because I was too lazy to make a method specific to the "newpin" version
+		document.getElementById("newPinPopup").style.visibility='hidden';
+		document.getElementById("noBoardMessage").style.visibility='hidden';
 	}
 	
 	function goHome(id){
@@ -58,8 +74,10 @@ Pennterest
 </form></span>
 <span id="home" onclick="goHome(<%=userID%>)">Home</span>
 <span id="profile" onclick="goProfile(<%=userID%>)">Profile</span>
+<span style="font-size:26px"><button type="button" class="addButton" onclick="newPin(<%=boards.length%>)">+</button></span>
 </div> <br/>
-<center><%=pins[0].BOARDNAME%> <br/></center>
+<center><%=boardName%> <br/></center>
+<% if(pins.length == 0) { %> No pins to display <% } %>
 <table id="feed">
 <tr>
 <% for(var i = 0; i < pins.length; i++) { %>
@@ -82,7 +100,7 @@ Pennterest
 	  <input type="text" name="pinID" value="<%=pins[i].PINID %>" style="display:none">
 	  </form>
       </div>
-      <button class='pinButton' id="<%="button" + i%>" type="button" onclick="pin(<%=pins[i].PINID%>)")">Pin It</button>
+      <button class='pinButton' id="<%="button" + i%>" type="button" onclick="pin(<%=pins[i].PINID%>, <%=boards.length%>)")">Pin It</button>
       <div class ='description'> 
       <div class='stars'>
       <% var rating = pins[i].RATING;
@@ -107,6 +125,12 @@ Pennterest
 </tr>
 </table>
 
+<div class="popUp" id="noBoardMessage" style="visibility:hidden">
+You have not created any boards yet. Go to your profile to make a board,
+then start pinning!<br/><br/><br/>
+<button class="pinSubmit" type="button" onclick="closeWindow()">OK</button>
+</div>
+
 <div class="popUp" id="pinPopup" style="visibility:hidden">
 <form id="pinForm" action="/addPin" method="POST" target="hidden-iframe">
 Choose Board <br/>
@@ -120,9 +144,28 @@ Description <br/>
 <input class="descInput" type="text" name="description"><br/>
 <input id="toBePinned" type="text" name="pinID" style="display:none">
 <input type="text" name="userID" value="<%=userID%>" style="display:none">
-<input type="text" name="boardName" value="<%=pins[0].BOARDNAME%>" style="display:none">
 <br/>
 <br/>
+<button class="pinCancel" type="button" onclick="closeWindow()">Cancel</button>
+<input class="pinSubmit" type="submit" value="Pin" onclick="closeWindow()">
+</form>
+</div>
+
+<div class="popUp" id="newPinPopup" style="visibility:hidden">
+<form id="newPinForm" action="/pinNewContent" method="POST" target="hidden-iframe">
+Choose Board <br/>
+<select name="boardName" form="newPinForm">
+<% for(var i = 0; i < boards.length; i++) {
+ 	var bname = boards[i].BOARDNAME; %>
+	<option value="<%=bname%>"><%=bname%></option>
+<% } %>
+</select><br/>
+URL <br/>
+<input style="width:80%;" type="text" name="url"><br/>
+Description <br/>
+<input class="descInput" type="text" name="description"><br/>
+<input type="text" name="userID" value="<%=userID%>" style="display:none">
+<span></span>
 <button class="pinCancel" type="button" onclick="closeWindow()">Cancel</button>
 <input class="pinSubmit" type="submit" value="Pin" onclick="closeWindow()">
 </form>

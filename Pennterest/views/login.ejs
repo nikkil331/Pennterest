@@ -1,67 +1,76 @@
 <!DOCTYPE html>
 <head>
-	<title>Pennterest Login</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
-    <script type='text/javascript' src='/js/jquery.validate.js'></script>
-	<script>
+<title>Pennterest Login</title>
+<link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+<link rel='stylesheet' href='/stylesheets/login.css' />
+</head>
+<body>
+	<div id="login-container">
+    <form method="post" id="login-form" class="well span4">
+      <h1>Welcome!</h1>
+      <p class="subheading">Please Login To Your Account</p>
+      <label>Email </label>
+      <input type="text" name="email" id="email-tf" class="span4 required"><br />
+      <label>Password</label>
+      <input type="password" name="pass" id="pass-tf" class="span4 required">
+      <button type="submit" id="btn-login" class="btn btn-primary">Sign in</button>
+      <label id="remember-me" class="checkbox">Remember Me
+        <input type="checkbox" checked="checked">
+      </label>
+      <div class="clear-fix"></div>
+      <hr>
+      <div class="btm-links"><a href="#" id="forgot-password">Forgot Your Password?</a><a href="/register" id="create-account">Create An Account</a></div>
+    </form>
+  </div>
+  <div class="modal-alert modal hide fade">
+    <div class="modal-header">
+      <button data-dismiss="modal" class="close">x</button>
+      <h3></h3>
+    </div>
+    <div class="modal-body">
+      <p></p>
+    </div>
+    <div class="modal-footer">
+      <button data-dismiss="modal" id="ok" class="btn btn-warning">OK</button>
+    </div>
+  </div>
+  <div id="get-credentials" class="modal-single-input modal hide fade">
+    <div class="modal-header">
+      <button data-dismiss="modal" class="close">x</button>
+      <h3>Retrieve Password</h3>
+    </div>
+    <div class="modal-body">
+      <form method="post" id="get-credentials-form" class="well span5">
+        <p>Please enter the email address associated with your account</p>
+        <input type="text" name="email" id="email-tf" class="span5 required">
+        <button type="submit" id="submit" class="btn btn-primary">Submit</button>
+        <button data-dismiss="modal" id="cancel" class="btn">Cancel</button>
+        <div class="alert alert-error hide"></div>
+        <button data-dismiss="alert" class="close"></button>
+      </form>
+    </div>
+    <div class="modal-footer"></div>
+  </div>
+</body>
+<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+<script type='text/javascript' src='/js/jquery.validate.js'></script>
+<script src="/js/bootstrap-modal.js"></script>
+<script src="/js/bootstrap-transition.js"></script>
+<script>
 	$().ready(function() {
-		$("#signupForm").validate({
+		$("#login-form").validate({
 			rules: {
-				firstname: "required",
-				lastname: "required",
-				password: {
-					required: true,
-					minlength: 5
-				},
 				email: {
 					required: true,
 					email: true
+				},
+				pass: {
+					required: true
 				}
 			}
 		});
-		$("#reg").click(function () {
-			$("#loginbox").css("display","none");
-			$("#regbox").css("display","block");
-		});
 	});
-	</script>
-</head>
-<body>
-	<div id="loginbox" style="border:solid 1px green">
-  		<h1>Pennterest Login</h1>
-  		Email: <input type="text" /> <br />
-  		Password: <input type="password" /> <br />
-  		<a id="reg">Register</a>
-	</div>
-	<div id="regbox" style="display:none">
-  		<h1>Register</h1>
-  		<form class="cmxform" id="signupForm" method="get" action="">
-		<fieldset>
-			<legend>Validating a complete form</legend>
-			<p>
-				<label for="firstname">Firstname</label>
-				<input id="firstname" name="firstname" type="text" />
-			</p>
-			<p>
-				<label for="lastname">Lastname</label>
-				<input id="lastname" name="lastname" type="text" />
-			</p>
-			<p>
-				<label for="password">Password</label>
-				<input id="password" name="password" type="password" />
-			</p>
-			<p>
-				<label for="email">Email</label>
-				<input id="email" name="email" type="email" />
-			</p>
-			<p>
-				<input class="submit" type="submit" value="Submit"/>
-			</p>
-		</fieldset>
-		</form>
-	</div>
-</body>
+</script>
 </html>
 
 

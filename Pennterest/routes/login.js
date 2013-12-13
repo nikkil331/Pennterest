@@ -6,7 +6,7 @@ var connectData = {
 	};
 
 var oracle =  require("oracle");
-
+var crypto = require('crypto');
 
 exports.login = function(req, res){
 	if (false /*usr logged in*/) {
