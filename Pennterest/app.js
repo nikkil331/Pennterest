@@ -40,7 +40,7 @@ if ('development' === app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index);
+app.get('/', home.home);
 app.get('/test', test.index);
 app.get('/user', user.user);
 app.post('/addBoard', user.addNewBoard);

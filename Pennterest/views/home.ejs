@@ -83,7 +83,7 @@ Pennterest
 	<input id="searchButton" type="submit" value="search" class="tfbutton">
 </form></span>
 <span id="home" onclick="goHome(<%=userID%>)">Home</span>
-<span id="profile" onclick="goProfile(<%=userID%>)">Profile</span>
+<a id="profile" href="/user">Profile</a>
 <span style="font-size:26px"><button type="button" class="addButton" onclick="newPin(<%=boards.length%>)">+</button></span>
 </div>
 <% if(upins.length == 0) { %> You Have No Recent Pins to Display 

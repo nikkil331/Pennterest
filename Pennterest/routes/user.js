@@ -75,7 +75,17 @@ function get_profile(res,id) {
         }
 
 exports.user = function(req, res){
-  get_profile(res, req.query["userID"]);
+	//console.log(req.query["userID"]);
+	if( (typeof req.query.userID) != 'undefined') {
+		get_profile(res, req.query["userID"]);
+	}
+	else if(req.session.user != null) {
+		console.log(req.session.user);
+		get_profile(res, req.session.user.USERID);
+	}
+	else {
+		res.redirect('/login?err=2');
+	}
 };
 
 exports.addNewBoard = function(req, res){
