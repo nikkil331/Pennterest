@@ -58,7 +58,6 @@
 	
 	function goProfile(id){
 	  window.location.href = '/user?userID=' + id;
-	  
 	}
 
     </script>
@@ -117,8 +116,12 @@ Pennterest
       <% } %>
       <% } %>
       </div>
-      <span class="userName"><%= pins[i].FIRSTNAME %></span>
-      <span class="boardName"><%= pins[i].BOARDNAME %></span>
+      <a href="/user?userID=<%=pins[i].USERID%>">
+      	<span class="userName"><%= pins[i].FIRSTNAME %></span>
+      </a>
+      <a href="/board?boardName=<%=pins[i].BOARDNAME %>&suserID=<%=userID%>&buserID=<%=pins[i].USERID%>">
+      	<span class="boardName"><%= pins[i].BOARDNAME %></span>
+      </a>
       </div>
       </td>
     <% } %>

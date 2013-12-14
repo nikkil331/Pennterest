@@ -9,9 +9,6 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
-}
 body{
 font-size: 30px;
 font-family: 'Dosis', sans-serif;
@@ -100,6 +97,19 @@ width:100%;
 height:300px;
 overflow:hidden;
 border-radius:10px 10px 0px 0px;
+}
+
+.pinDisplay a:link{
+text-decoration:none;
+color:black;
+}
+
+.pinDisplay a:hover{
+font-weight:bold;
+}
+
+.pinDisplay a:visited{
+color:black;
 }
 
 .upinDisplay{
@@ -324,3 +334,88 @@ border-style:none;
 z-index:1;
 box-shadow: 2px 5px 2px #222222;
 }
+
+#userinfo{
+margin-left:auto;
+margin-right:auto;
+background-color:#FFFFFF;
+height:20%;
+width:80%;
+border-radius:10px;
+box-shadow: 5px 5px 5px 5px #DDDDDD;
+}
+
+#userbasics{
+vertical-align:top;
+padding-left:15px;
+width:75%;
+overflow:hidden;
+}
+
+#userinfo img{
+border-radius:10px 0px 0px 10px;
+overflow:hidden;
+height:100%;
+width:100%;
+}
+
+#boards{
+width:65%;
+height:100%;
+float:left;
+}
+
+#boards a:link{
+text-decoration:none;
+color: #00B7FF;
+}
+
+#boards a:hover{
+font-weight:bold;
+color: #00B7FF;
+}
+
+#boards a:visited{
+color: #00B7FF;
+}
+
+#friends{
+width:35%;
+height:100%;
+float:right;
+}
+
+#friends img{
+height:75px;
+width:75px;
+border-radius:5px;
+overflow:hidden;
+}
+
+#friends a:link{
+text-decoration:none;
+color: #00B7FF;
+}
+
+#friends a:hover{
+font-weight:bold;
+color: #00B7FF;
+}
+
+#friends a:visited{
+color: #00B7FF;
+}
+
+#newBoardButton{
+	background: linear-gradient(#0000FF, #0066FF);
+	position:absolute;
+	left:0px;
+	bottom:0px;
+	width: 100%;
+	height: 75px;
+	color: #FFFFFF;
+	font-size: 20px;
+	border-style:none;
+}
+
+
