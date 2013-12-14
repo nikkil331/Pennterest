@@ -27,8 +27,11 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.bodyParser());
+app.use(express.cookieParser());
+app.use(express.session({ secret: 'super-duper-secret-secret' }));
 app.use(express.urlencoded());
 app.use(express.methodOverride());
+
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -48,6 +51,8 @@ app.get('/board', board.getBoardContent);
 app.post('/updateRating', home.update);
 app.post('/pinExisting', home.pinExisting);
 app.post('/pinNewContent', home.pinNewContent);
+app.post('/login', login.postLogin);
+app.post('/logout', function(req, res) {req.session.user = null; res.redirect('/login?logout=1');});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

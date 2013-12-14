@@ -23,6 +23,11 @@ body {
 #login-container label {
   margin: 15px 0 5px 5px;
 }
+#login-container label.error {
+  color: #801010;
+  margin:0;
+}
+
 #login-container button {
   width: 150px;
   padding: 6px 40px 6px 40px;
@@ -126,6 +131,7 @@ label {
   -moz-text-shadow: -1px 1px 0 #fff;
   -webkit-text-shadow: -1px 1px 0 #fff;
 }
+
 .subheading {
   color: #808080;
   text-shadow: -1px 1px 0 #fff;

@@ -9,8 +9,9 @@
     <form method="post" id="login-form" class="well span4">
       <h1>Welcome!</h1>
       <p class="subheading">Please Login To Your Account</p>
+      <% if (!(typeof errmsg === 'undefined')) { %><label class="error"><%= errmsg %></label><%}%>
       <label>Email </label>
-      <input type="text" name="email" id="email-tf" class="span4 required"><br />
+      <input type="text" name="email" id="email-tf" class="span4 required">
       <label>Password</label>
       <input type="password" name="pass" id="pass-tf" class="span4 required">
       <button type="submit" id="btn-login" class="btn btn-primary">Sign in</button>
@@ -19,7 +20,7 @@
       </label>
       <div class="clear-fix"></div>
       <hr>
-      <div class="btm-links"><a href="#" id="forgot-password">Forgot Your Password?</a><a href="/register" id="create-account">Create An Account</a></div>
+      <div class="btm-links"><a href="/register" id="create-account">Create An Account</a></div>
     </form>
   </div>
   <div class="modal-alert modal hide fade">

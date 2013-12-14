@@ -12,7 +12,7 @@ var connectData = {
 
 var oracle =  require("oracle");
 
-function getPins_db(res, id) {
+function getPins_db(res, id, req) {
 	oracle.connect(connectData, function(err, connection) {
 		if ( err ) {
 			console.log(err);
@@ -33,7 +33,7 @@ function getPins_db(res, id) {
 					function(err, uresults){
 				if(err) {console.log(err); }
 				else{
-					getSuggestions(uresults, id, connection, res);
+					getSuggestions(uresults, id, connection, res, req);
 				}
 			});
 		}
@@ -41,7 +41,7 @@ function getPins_db(res, id) {
 
 }
 
-function getSuggestions(uresults, id, connection,res){
+function getSuggestions(uresults, id, connection,res, req){
 	//first 10 pins tagged with user's interests
 	var interestsPins = "(SELECT * FROM " +
 	"(SELECT PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING," +
@@ -77,32 +77,36 @@ function getSuggestions(uresults, id, connection,res){
 		if ( err ) {
 			console.log(err);
 		} else {
-			getBoardNames(uresults, presults, id, connection, res);
+			getBoardNames(uresults, presults, id, connection, res, req);
 		}
 	});
 }
 
-function getBoardNames(uresults, presults, id, connection, res){
+function getBoardNames(uresults, presults, id, connection, res, req){
 	var query = "SELECT BOARDNAME FROM BOARD WHERE USERID=" + id;
 	connection.execute(query,
 			[],
 			function(err, bresults){
 		if(err) {console.log(err);}
-		else{
-			res.render('home.ejs',
-					{userID : id,
-				boards : bresults,
-				pins: presults,
-				upins : uresults
-					}
-			);
-			connection.close();
+		else {
+			if(req.session.user != null) {
+				res.render('home.ejs',
+					{userID : req.session.user.ID,
+					boards : bresults,
+					pins: presults,
+					upins : uresults }
+				);
+				connection.close();
+			}
+			else {
+				res.redirect('/login?err=2');
+			}
 		}
 	});
 }
 
 exports.home = function(req, res){
-    getPins_db(res, 109);
+    getPins_db(res, 109, req);
 };
 
 //adds new rating
