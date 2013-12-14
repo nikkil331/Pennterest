@@ -6,12 +6,14 @@
     <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'>
     </script>
     <script>
+
     function goHome(id){
       window.location.href = '/home?userID=' + id;
     }
     function goProfile(id){
 	  window.location.href = '/user?userID=' + id;
 	}
+
     </script>
 
 </head>
@@ -24,6 +26,7 @@ Pennterest
     <input id="textInput" type="text" size="21" maxlength="120" name="searchterm">
     <input id="searchButton" type="submit" value="search" class="tfbutton">
 </form></span>
+<<<<<<< HEAD
 <span id="home" onclick="goHome(<%=user[0].USERID%>)">Home</span>
 <span id="profile" onclick="goProfile(<%=user[0].USERID%>)">Profile</span>
 </div>
@@ -101,6 +104,38 @@ About Me:<br/>
 </table>
 </div>
 <div id="friends">
+=======
+<span id="home" onclick="goHome(<%=user[0].userID%>)">Home</span>
+<span id="profile" onclick="goProfile(<%=user[0].userID%>)">Profile</span>
+</div>
+<h4>My Boards</h4>
+<% for(var i = 0; i < boards.length; i++) {
+    var bname = boards[i].BOARDNAME;
+    var buser = boards[i].USERID %>
+    <a href="/board?BOARDNAME=<%=bname%>&USERID<%=buser%>"><%=bname%></a>
+<% } %>
+<br />
+<h4>Add a board</h4>
+<form id="addBoard" action="/addBoard" method="post">
+    <input type="text" name="userID" value="109" style="display:none">
+    <input id="boardName" type="text" size="21" maxlength="120" name="boardName">
+    <input id="addButton" type="submit" value="addBoard" class="tfbutton">
+</form>
+<br />
+<div>
+<h4>My Info</h4>
+<ul>
+<li>Name: <%=user[0].FIRSTNAME%> <%=user[0].LASTNAME%></li>
+<li>Born On: <%user[0].DOB%></li>
+<li>Gender: <%user[0].GENDER%></li>
+<li>Affiliated With: <%user[0].AFFILIATION%></li>
+<li>Member Since: <%user[0].JOINDATE%></li>
+</ul>
+</div>
+<div>
+<h4>About Me</h4>
+<p><%user[0].BIO%></p>
+>>>>>>> 149648c69837e12de4bd03d03ee49a7e82e326dd
 <h4>Following</h4>
 <% for(var i = 0; i < friends.length; i++) {
     var fname = friends[i].FIRSTNAME;
