@@ -13,7 +13,19 @@
     function goProfile(id){
 	  window.location.href = '/user?userID=' + id;
 	}
+	function newPin(numBoards){
+		if(numBoards == 0){
+			document.getElementById("noBoardMessage").style.visibility='visible';
+		}
+		else{
+			document.getElementById("newPinPopup").style.visibility='visible';
+		}
+	}
 
+	function closeWindow(){
+		document.getElementById("newPinPopup").style.visibility='hidden';
+		document.getElementById("noBoardMessage").style.visibility='hidden';
+	}
     </script>
 
 </head>
@@ -28,6 +40,7 @@ Pennterest
 </form></span>
 <span id="home" onclick="goHome(<%=user[0].USERID%>)">Home</span>
 <span id="profile" onclick="goProfile(<%=user[0].USERID%>)">Profile</span>
+<span style="font-size:26px"><button type="button" class="addButton" onclick="newPin(<%=boards.length%>)">+</button></span>
 </div>
 
 <table id="userinfo">
@@ -117,6 +130,27 @@ About Me:<br/>
 <% } %>
 <br />
 </div>
+
+<div class="popUp" id="newPinPopup" style="visibility:hidden">
+<form id="newPinForm" action="/pinNewContent" method="POST" target="hidden-iframe">
+Choose Board <br/>
+<select name="boardName" form="newPinForm">
+<% for(var i = 0; i < boards.length; i++) {
+ 	var bname = boards[i].BOARDNAME; %>
+	<option value="<%=bname%>"><%=bname%></option>
+<% } %>
+</select><br/>
+URL <br/>
+<input style="width:80%;" type="text" name="url"><br/>
+Description <br/>
+<input class="descInput" type="text" name="description"><br/>
+<input type="text" name="userID" value="<%=109%>" style="display:none">
+<span></span>
+<button class="pinCancel" type="button" onclick="closeWindow()">Cancel</button>
+<input class="pinSubmit" type="submit" value="Pin" onclick="closeWindow()">
+</form>
+</div>
+<iframe id="hidden-iframe" style="display:none"></iframe>
 
 </body>
 </html>
