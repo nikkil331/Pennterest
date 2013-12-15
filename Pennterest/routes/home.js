@@ -90,8 +90,9 @@ function getBoardNames(uresults, presults, id, connection, res, req){
 		if(err) {console.log(err);}
 		else {
 			if(req.session.user != null) {
+				console.log(req.session.user);
 				res.render('home.ejs',
-					{userID : req.session.user.ID,
+					{userID : req.session.user.USERID,
 					boards : bresults,
 					pins: presults,
 					upins : uresults }
