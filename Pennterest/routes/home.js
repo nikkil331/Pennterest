@@ -49,7 +49,7 @@ function getSuggestions(uresults, id, connection,res, req){
 	"(SELECT c.CONTENTPATH, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG, AVG(pr.RATING) as RATING " +
 	"FROM PIN p, CONTENTTAG ct1, CONTENTTAG ct2, TAG t, INTERESTED i, USERS u, CONTENT c, PINRATING pr " +
 	"WHERE p.CONTENTID = ct1.CONTENTID AND i.TAGID = ct1.TAGID AND i.USERID =" + id +
-	" AND p.CONTENTID = c.CONTENTID AND u.USERID = p.USERID" +
+	" AND p.CONTENTID = c.CONTENTID AND u.USERID = p.USERID AND u.USERID <> " + id +
 	" AND p.CONTENTID = ct2.CONTENTID(+) AND ct2.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
 	" GROUP BY c.CONTENTPATH, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG" +
 	" ORDER BY p.PINID) " +
@@ -107,7 +107,11 @@ function getBoardNames(uresults, presults, id, connection, res, req){
 }
 
 exports.home = function(req, res){
-    getPins_db(res, 109, req);
+	if(req.session.user == null){
+		res.redirect('/login?err=2');
+		return;
+	}
+    getPins_db(res, req.session.user.USERID, req);
 };
 
 //adds new rating
@@ -118,7 +122,7 @@ exports.update = function(req, res){
 			console.log(err);
 		} else {
 			var query = "SELECT PINID, USERID FROM PINRATING" +
-			" WHERE PINID = " + req.body.pinID + " AND USERID = " + req.body.userID;
+			" WHERE PINID = " + req.body.pinID + " AND USERID = " + req.session.user.USERID;
 			connection.execute(query, [],
 					function(err, results) {
 				if ( err ) {
@@ -127,11 +131,11 @@ exports.update = function(req, res){
 					var insertRating;
 					if(results.length > 0){
 						insertRating = "UPDATE PINRATING SET RATING = " + req.body.rating +
-						" WHERE PINID = " + req.body.pinID + " AND USERID = " + req.body.userID;
+						" WHERE PINID = " + req.body.pinID + " AND USERID = " + req.session.user.USERID;
 					}
 					else{
 						insertRating = "INSERT INTO PINRATING (USERID, PINID, RATING) VALUES " +
-						"(" + req.body.userID + ", " + req.body.pinID + ", " + req.body.rating + ")";
+						"(" + req.session.user.USERID + ", " + req.body.pinID + ", " + req.body.rating + ")";
 					}
 					console.log(insertRating);
 					connection.execute(insertRating,
@@ -169,7 +173,7 @@ exports.pinExisting = function(req, res){
 				if(err) {console.log(err);}
 				else{
 					console.log("now to pin...");
-					var data = {"contentid":results[0]["CONTENTID"], "userid":req.body.userID, "boardname":req.body.boardName, 
+					var data = {"contentid":results[0]["CONTENTID"], "userid":req.session.user.USERID, "boardname":req.body.boardName, 
 							"description":req.body.description, "tags":tags, "connection":connection, "response":res};
 					pinContent(data);
 				}
@@ -250,7 +254,7 @@ function insertContentTag (data, tagid, index){
 			[],
 			function(err,insertRes){
 		if(err) {console.log(err);}
-		if(index == data["tags"].length){
+		if(index == data["tags"].length-1){
 			data["connection"].close();
 		}
 	});
@@ -276,7 +280,7 @@ function insertTag(data, tag, index){
 						function(err, results){
 					if(err) { console.log(err); }
 					connection.close();
-					if(index == data["tags"].length){
+					if(index == data["tags"].length-1){
 						data["connection"].close();
 					}
 				});
@@ -287,7 +291,7 @@ function insertTag(data, tag, index){
 
 exports.pinNewContent = function(req, res){
 	var boardName = req.body.boardName;
-	var userID = req.body.userID;
+	var userID = req.session.user.USERID;
 	var url = req.body.url;
 	var description = req.body.description;
 	oracle.connect(connectData, function(err, connection){
@@ -331,7 +335,7 @@ function addContent(req, res, connection){
 				if(err) {console.log(err);}
 				else{
 					console.log(cid);
-					var data = {"contentid":cid[0]["CURRVAL"], "userid":req.body.userID, "boardname":req.body.boardName,
+					var data = {"contentid":cid[0]["CURRVAL"], "userid":req.session.user.USERID, "boardname":req.body.boardName,
 							"description":req.body.description, "tags":tags, "connection":connection, "response":res};
 					pinContent(data);
 				}

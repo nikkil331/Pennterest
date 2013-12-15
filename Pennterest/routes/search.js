@@ -9,6 +9,11 @@ var connectData = {
 		  "database": "PENNZNE" };
 
 exports.search = function(req, res){
+	if(req.session.user == null){
+		res.redirect('/login?err=2');
+		return;
+	}
+	
 	oracle.connect(connectData, function(err, connection) {
 		if(err){
 			console.log(err);
@@ -35,7 +40,7 @@ exports.search = function(req, res){
 				if(err) { console.log(err); }
 				else{
 					console.log(presults);
-					query = "SELECT BOARDNAME FROM BOARD WHERE USERID=" + req.query["userID"];
+					query = "SELECT BOARDNAME FROM BOARD WHERE USERID=" + req.session.user.USERID;
 					console.log(query);
 		  	    	connection.execute(query,
 		  	    			[],
@@ -43,7 +48,7 @@ exports.search = function(req, res){
 		  	    			if(err) {console.log(err);}
 		  	    			else{
 		  	    		    	res.render('search.ejs',
-		  	    		    			{userID : req.query["userID"],  
+		  	    		    			{userID : req.session.user.USERID,  
 		  	    		    			 boards : bresults,
 		  	    		    			 pins: presults }
 		  	    				  );

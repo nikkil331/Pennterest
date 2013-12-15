@@ -108,6 +108,23 @@ color:white;
 color:blue;
 }
 
+#logout{
+cursor:pointer;
+padding-right:20px;
+float:right;
+color:#FFFFFF;
+font-size:20px;
+font-family: 'Dosis', sans-serif;
+}
+
+#logout a:visited{
+color:white;
+}
+
+#logout a:hover{
+color:blue;
+}
+
 
 #newPin{
 cursor:pointer;
@@ -123,6 +140,11 @@ font-family: 'Dosis', sans-serif;
 margin-left:auto;
 margin-right:auto;
 padding-top: 25px;
+}
+
+#upins{
+margin-left:auto;
+margin-right:auto;
 }
 
 .pinDisplay{
@@ -322,7 +344,7 @@ position:fixed;
 top:25%;
 left:30%;
 width:40%;
-height:50%;
+height:300px;
 background-color:#FFFFFF;
 font-size:26px;
 box-shadow: 5px 10px 5px #222222;
@@ -392,6 +414,7 @@ height:20%;
 width:80%;
 border-radius:10px;
 box-shadow: 5px 5px 5px 5px #DDDDDD;
+overflow:hidden;
 }
 
 #userbasics{
@@ -403,8 +426,7 @@ overflow:hidden;
 
 #userinfo img{
 border-radius:10px 0px 0px 10px;
-overflow:hidden;
-height:100%;
+height:300px;
 width:100%;
 }
 
@@ -415,6 +437,8 @@ position:relative;
 
 #follow form{
 position:absolute;
+width:80%;
+height:15%;
 top:10px;
 left:20px;
 display:table-cell;
@@ -423,8 +447,8 @@ vertical-align:top;
 
 #followButton{
 background: linear-gradient(#E3052A, #BF0826);
-width: 100px;
-height: 40px;
+width: 100%;
+height: 100%;
 border-radius: 7px;
 color: #FFFFFF;
 font-size: 20px;

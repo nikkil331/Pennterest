@@ -11,9 +11,13 @@ var connectData = {
 };
 	
 exports.getBoardContent = function(req, res){
+	if(req.session.user == null){
+		res.redirect('/login?err=2');
+		return;
+	}
 	var boardName = req.query["boardName"];
 	var buserID = req.query["buserID"]; //board owner's id
-	var suserID = req.query["suserID"]; //session owner's id
+	var suserID = req.session.user.USERID;
 	oracle.connect(connectData, function(err, connection){
 		if(err) {console.log(err);}
 		else{
@@ -39,13 +43,15 @@ exports.getBoardContent = function(req, res){
 				  			function(err, bresults){
 				  			if(err) {console.log(err);}
 				  			else{
-				  		    	res.render('board.ejs',
+				  				if(req.session.user != null){				  		    	
+				  					res.render('board.ejs',
 				  		    			{userID : suserID,  
 				  		    			 boards : bresults,
 				  		    			 pins: cresults,
 				  		    			 boardName: boardName
 				  		    			}
 				  				  );
+				  				}
 				  				connection.close();
 				  			}
 							   });

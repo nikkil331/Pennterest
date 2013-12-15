@@ -15,23 +15,23 @@ var connectData = {
                   "database": "PENNZNE" };
 var oracle =  require("oracle");
 
-function getFriendNames(results, id, connection, res){
-        query = "SELECT u.FIRSTNAME, u.LASTNAME, u.USERID, u.PROFILEPICPATH FROM FOLLOWING f, USERS u WHERE f.FOLLOWER=" + id + " AND f.FOLLOWED = u.USERID";
+function getFriendNames(results, displayed, viewer, connection, res){
+        query = "SELECT u.FIRSTNAME, u.LASTNAME, u.USERID, u.PROFILEPICPATH FROM FOLLOWING f, USERS u WHERE f.FOLLOWER=" + displayed + " AND f.FOLLOWED = u.USERID";
           connection.execute(query,
                           [],
                           function(err, fresults){
                           if(err) {console.log(err);}
                           else{
-                                  getBoardNames(results, fresults, id, connection, res);
+                                  getBoardNames(results, fresults, displayed, viewer, connection, res);
                           }
           });
 }
 
-function getBoardNames(results, fresults, id, connection, res){
+function getBoardNames(results, fresults, displayed, viewer, connection, res){
         query = "SELECT B.BOARDNAME, " +
         		"MAX(C.CONTENTPATH) KEEP (DENSE_RANK FIRST ORDER BY C.CONTENTID) as CONTENTPATH  " +
         		"FROM BOARD B, CONTENT C, PIN P " +
-        		"WHERE B.USERID=" + id + " AND B.BOARDNAME = P.BOARDNAME(+) AND " +
+        		"WHERE B.USERID=" + displayed + " AND B.BOARDNAME = P.BOARDNAME(+) AND " +
         		"P.CONTENTID = C.CONTENTID(+) " +
         		"GROUP BY B.BOARDNAME";
         console.log(query);
@@ -44,7 +44,8 @@ function getBoardNames(results, fresults, id, connection, res){
                               res.render('user.ejs',
                                             {user : results, 
                                             boards: bresults,
-                                            friends: fresults
+                                            friends: fresults,
+                                            viewer: viewer
                                             }
                                     );
                                   connection.close();
@@ -52,14 +53,14 @@ function getBoardNames(results, fresults, id, connection, res){
           });
 }
 
-function get_profile(res,id) {
+function get_profile(res, displayed, viewer) {
           oracle.connect(connectData, function(err, connection) {
             if ( err ) {
                     console.log(err);
             } else {
-                    var query = "SELECT USERID, FIRSTNAME, LASTNAME, GENDER, BIO, AFFILIATION, " +
+                    var query = "SELECT USERID, FIRSTNAME, LASTNAME, GENDER, BIO, AFFILIATION, PROFILEPICPATH, " +
                     		"TO_CHAR(DOB, 'MM - DD - YYYY') AS DOB " +
-                    		"FROM USERS WHERE USERID=" + id;
+                    		"FROM USERS WHERE USERID=" + displayed;
                     console.log(query);
                       connection.execute(query,
                                       [],
@@ -67,20 +68,24 @@ function get_profile(res,id) {
                                       console.log(results);
                                       if(err) {console.log(err);}
                                       else{
-                                          getFriendNames(results, id, connection, res);
+                                          getFriendNames(results, displayed, viewer, connection, res);
                                       }
                       });
             }
           }); // end oracle.connect
         }
 exports.follow = function(req, res){
+	if(req.session.user == null){
+		res.redirect('/login?err=2');
+		return;
+	}
 	var followed = req.body.followed;
-	var follower = 109; //replace this with session user
+	var follower = req.session.user.USERID;
 	oracle.connect(connectData, function(err, connection){
 		if(err) {console.log(err);}
 		else{
 			var query = "INSERT INTO FOLLOWERS (FOLLOWED, FOLLOWING) VALUES " +
-					"('" + followed + "', '" + follower + "'";
+					"('" + followed + "', '" + follower + "')";
 			console.log(query);
 			connection.execute(query, [], function(err, results){
 				if(err) {console.log(err);}
@@ -93,13 +98,12 @@ exports.follow = function(req, res){
 	});
 }
 exports.user = function(req, res){
-	//console.log(req.query["userID"]);
-	if( (typeof req.query.userID) != 'undefined') {
-		get_profile(res, req.query["userID"]);
+	if( (typeof req.query.userID) != 'undefined' && req.session.user != null) {
+		get_profile(res, req.query["userID"], req.session.user.USERID);
 	}
 	else if(req.session.user != null) {
 		console.log(req.session.user);
-		get_profile(res, req.session.user.USERID);
+		get_profile(res, req.session.user.USERID, req.session.user.USERID);
 	}
 	else {
 		res.redirect('/login?err=2');
@@ -107,10 +111,12 @@ exports.user = function(req, res){
 };
 
 exports.addNewBoard = function(req, res){
+		if(req.session.user == null){
+			res.redirect('/login?err=2');
+			return;
+		}
         var boardName = req.body.boardName;
-        var userID = req.body.userID;
-        console.log("boardName = " + boardName);
-        console.log("userID = " + userID);
+        var userID = req.session.user.USERID;
         oracle.connect(connectData, function(err, connection){
                 var query = "SELECT b.BOARDNAME FROM BOARD b WHERE b.USERID = '" + userID + 
                 "' AND b.BOARDNAME= '" + boardName + "'";
@@ -125,11 +131,13 @@ exports.addNewBoard = function(req, res){
                                 }
                                 //old content, use pinExisting()
                                 else{
+                                	res.end();
+                                	connection.close();
                                         console.log("board already exists for user");
                                 }
                         }
-                })
-         })
+                });
+         });
 }
 function addBoard(req, res, connection, boardName, userID){
         var query = "INSERT INTO BOARD (BOARDNAME,USERID) VALUES ('"+ boardName + "' , " + userID + ")";
@@ -137,6 +145,8 @@ function addBoard(req, res, connection, boardName, userID){
                 if(err) {console.log(err + " second err");}
                 else{
                         console.log("new board made!");
+                        connection.close();
+                        res.redirect('/user?userID=' + userID);
                 }
         });
 }

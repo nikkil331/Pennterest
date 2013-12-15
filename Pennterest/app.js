@@ -56,7 +56,7 @@ app.post('/updateRating', home.update);
 app.post('/pinExisting', home.pinExisting);
 app.post('/pinNewContent', home.pinNewContent);
 app.post('/login', login.postLogin);
-app.post('/logout', function(req, res) {req.session.user = null; res.redirect('/login?logout=1');});
+app.get('/logout', function(req, res) {req.session.user = null; res.redirect('/login?logout=1');});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

@@ -10,16 +10,18 @@ var connectData = {
 	};
 
 var oracle =  require("oracle");
-var userID;
 exports.settings = function(req, res){
-	userID = req.query["userID"];
+	if(req.session.user == null){
+		res.redirect('/login?err=2');
+		return;
+	}
 	oracle.connect(connectData, function(err, connection) {
 		if ( err ) {
 			console.log(err);
 		} else {
 			var query = "SELECT USERID, FIRSTNAME, LASTNAME, GENDER, BIO, AFFILIATION, EMAIL, " +
     		"PROFILEPICPATH, TO_CHAR(DOB, 'MM / DD / YYYY') AS DOB " +
-    		"FROM USERS WHERE USERID=" + req.query["userID"];
+    		"FROM USERS WHERE USERID=" + req.session.user.USERID;
 			console.log(query);
 			connection.execute(query, [], function(err, results){
 				if(err){console.log(err);}
@@ -54,7 +56,7 @@ exports.change = function(req, res){
 					"', BIO = '" + bio +
 					"', AFFILIATION = '" + req.body.affiliation +
 					"', PROFILEPICPATH = '" + req.body.profilepic + 
-					"' WHERE USERID = " + userID;
+					"' WHERE USERID = " + req.session.user.USERID;
 			console.log(query);
 			connection.execute(query, [], function(err, results){
 				if(err ){console.log(err);}

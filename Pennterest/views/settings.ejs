@@ -14,6 +14,7 @@ Pennterest
 	<input id="textInput" type="text" size="21" maxlength="120" name="searchterm">
 	<input id="searchButton" type="submit" value="search" class="tfbutton">
 </form></span>
+<span id="logout"><a href="/logout">Logout</a></span>
 <span id="home"><a href="/home?userID=<%=user[0].USERID%>">Home</a></span>
 <span id="profile"><a href="/user">Profile</a></span>
 <span id="settings"><a href="/settings?userID=<%=user[0].USERID%>">Settings</a></span>
@@ -53,10 +54,12 @@ if(profilepic == null || profilepic == 'undefined') {profilepic = "";}
 </tr>
 <% 
 var isMale = false;
-var isFemale = true;   
+var isFemale = false;   
 if (gender == 'M'){
 isMale = true;
-isFemale = false;
+}
+else if (gender == 'F'){
+isFemale = true;
 }
 %>
 <tr>

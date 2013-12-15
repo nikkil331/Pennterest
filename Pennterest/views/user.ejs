@@ -8,7 +8,7 @@
     <script>
 
     function goHome(id){
-      window.location.href = '/home?userID=' + id;
+      window.location.href = '/home';
     }
     function goProfile(id){
 	  window.location.href = '/user?userID=' + id;
@@ -34,23 +34,23 @@
 <div id="toolbar">
 Pennterest
 <span><form id="search" action="/search" method="get">
-    <input type="text" name="userID" value="<%=user[0].USERID %>" style="display:none">
     <input id="textInput" type="text" size="21" maxlength="120" name="searchterm">
     <input id="searchButton" type="submit" value="search" class="tfbutton">
 </form></span>
-<span id="home"><a href="/home?userID=<%=user[0].USERID%>">Home</a></span>
-<span id="profile"><a href="/user">Profile</a></span>
-<span id="settings"><a href="/settings?userID=<%=user[0].USERID%>">Settings</a></span>
+<span id="logout"><a href="/logout">Logout</a></span>
+<span id="home"><a href="/home">Home</a></span>
+<span id="profile"><a href="/user?userID=<%=viewer%>">Profile</a></span>
+<span id="settings"><a href="/settings">Settings</a></span>
 <span id="newPin"><button type="button" class="addButton" onclick="newPin(<%=boards.length%>)">+</button></span>
 </div>
 
 <table id="userinfo">
-<tr>
+<tr style="height:100%">
 <% var pic = user[0].PROFILEPICPATH; 
 if (pic == null || pic == 'undefined') {
 	pic = "http://3.bp.blogspot.com/_JBHfzEovWs8/S8X3wH9vbTI/AAAAAAAAAPM/O8r2xpeeur0/s200/batman-for-facebook.jpg";
 }%>  
-<td style="width:25%;">
+<td style="width:25%; height:100%; overflow:hidden">
 <img src="<%=pic%>"/>
 </td>
 <td id="userbasics">
@@ -76,12 +76,14 @@ About Me:<br/>
 <% } %>
 </p> 
 </td>
+<% if(viewer != user[0].USERID) { %>
 <td id="follow">
 <form action="/follow" method="POST" target="hidden-iframe">
 <input type="text" name="followed" value="<%=user[0].USERID%>" style="display:none">
 <input id="followButton" type="submit" value="FOLLOW">
 </form>
 </td>
+<% } %>
 </tr>
 </table>
 
@@ -99,7 +101,7 @@ About Me:<br/>
     }
     if(i % 2 == 0) { %> <tr/><tr> <% } %>
     <td>
-    <a href="/board?boardName=<%=bname%>&buserID=<%=buser%>&suserID=<%=buser%>">
+    <a href="/board?boardName=<%=bname%>&buserID=<%=buser%>">
     <div class = 'upinDisplay'>
     	<img src="<%=bpic%>"><br/>
    	 	<center><p style="font-size:26px"><%=bname%></p></center>
@@ -107,18 +109,19 @@ About Me:<br/>
     </a>
     </td>
 <% } 
+ if( viewer == user[0].USERID ) {
  if(i % 2 == 0 && i != 0) { %> </tr><tr> <% } %>
  <td>
  	<div class='upinDisplay' style="background-color:rgba(200, 200, 200, 0.4);font-size:26px">
  	<center><p style="padding-top:20px;">Add a board</p><center/>
-	<form id="addBoard" action="/addBoard" method="post">
-    <input type="text" name="userID" value="109" style="display:none">
+	<form id="addBoard" action="/addBoard" method="post" target="hidden-iframe">
     <input id="boardName" type="text" size="50" maxlength="120" name="boardName" 
     	value="Board Name" style="height:50px;border-radius:5px">
     <input id="newBoardButton" type="submit" value="Go" class="tfbutton">
     </div>
 </form>
  </td>
+ <% } %>
 </tr>
 </table>
 </div>
@@ -151,7 +154,6 @@ URL <br/>
 <input style="width:80%;" type="text" name="url"><br/>
 Description <br/>
 <input class="descInput" type="text" name="description"><br/>
-<input type="text" name="userID" value="<%=109%>" style="display:none">
 <span></span>
 <button class="pinCancel" type="button" onclick="closeWindow()">Cancel</button>
 <input class="pinSubmit" type="submit" value="Pin" onclick="closeWindow()">

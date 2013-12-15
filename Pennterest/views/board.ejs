@@ -52,7 +52,7 @@
 	}
 	
 	function goHome(id){
-	  window.location.href = '/home?userID=' + id;
+	  window.location.href = '/home';
 	  
 	}
 	
@@ -67,13 +67,13 @@
 <div id="toolbar">
 Pennterest
 <span><form id="search" action="/search" method="get">
-	<input type="text" name="userID" value="<%=userID %>" style="display:none">
 	<input id="textInput" type="text" size="21" maxlength="120" name="searchterm">
 	<input id="searchButton" type="submit" value="search" class="tfbutton">
 </form></span>
-<span id="home"><a href="/home?userID=<%=userID%>">Home</a></span>
+<span id="logout"><a href="/logout">Logout</a></span>
+<span id="home"><a href="/home">Home</a></span>
 <span id="profile"><a href="/user">Profile</a></span>
-<span id="settings"><a href="/settings?userID=<%=userID%>">Settings</a></span>
+<span id="settings"><a href="/settings">Settings</a></span>
 <span style="font-size:26px"><button type="button" class="addButton" onclick="newPin(<%=boards.length%>)">+</button></span>
 </div> <br/>
 <center><%=boardName%> <br/></center>
@@ -120,7 +120,7 @@ Pennterest
       <a href="/user?userID=<%=pins[i].USERID%>">
       	<span class="userName"><%= pins[i].FIRSTNAME %></span>
       </a>
-      <a href="/board?boardName=<%=pins[i].BOARDNAME %>&suserID=<%=userID%>&buserID=<%=pins[i].USERID%>">
+      <a href="/board?boardName=<%=pins[i].BOARDNAME %>&buserID=<%=pins[i].USERID%>">
       	<span class="boardName"><%= pins[i].BOARDNAME %></span>
       </a>
       </div>
