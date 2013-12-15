@@ -9,6 +9,7 @@
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
+var settings = require('./routes/settings');
 var board = require('./routes/board');
 var test = require('./routes/test');
 var home = require('./routes/home');
@@ -48,6 +49,9 @@ app.get('/home', home.home);
 app.get('/search', search.search);
 app.get('/login', login.login);
 app.get('/board', board.getBoardContent);
+app.get('/settings', settings.settings);
+app.post('/changeSettings', settings.change);
+app.post('/follow', user.follow);
 app.post('/updateRating', home.update);
 app.post('/pinExisting', home.pinExisting);
 app.post('/pinNewContent', home.pinNewContent);

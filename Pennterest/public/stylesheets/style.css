@@ -9,6 +9,10 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
+a{
+text-decoration:none;
+}
+
 body{
 font-size: 30px;
 font-family: 'Dosis', sans-serif;
@@ -60,7 +64,52 @@ font-size:20px;
 font-family: 'Dosis', sans-serif;
 }
 
+#home a:visited{
+color:white;
+}
+
+#home a:hover{
+color:blue;
+}
+
+
 #profile{
+cursor:pointer;
+padding-right:10px;
+float:right;
+color:#FFFFFF;
+font-size:20px;
+font-family: 'Dosis', sans-serif;
+}
+
+#profile a:visited{
+color:white;
+}
+
+#profile a:hover{
+color:#0000FF;
+}
+
+#settings{
+cursor:pointer;
+padding-left:20px;
+padding-right:10px;
+float:right;
+color:#FFFFFF;
+font-size:20px;
+font-family: 'Dosis', sans-serif;
+}
+
+#settings a:visited{
+color:white;
+}
+
+#settings a:hover{
+color:blue;
+}
+
+
+#newPin{
 cursor:pointer;
 padding-left:20px;
 padding-right:10px;
@@ -348,7 +397,7 @@ box-shadow: 5px 5px 5px 5px #DDDDDD;
 #userbasics{
 vertical-align:top;
 padding-left:15px;
-width:75%;
+width:60%;
 overflow:hidden;
 }
 
@@ -359,6 +408,29 @@ height:100%;
 width:100%;
 }
 
+#follow{
+width:15%;
+position:relative;
+}
+
+#follow form{
+position:absolute;
+top:10px;
+left:20px;
+display:table-cell;
+vertical-align:top;
+}
+
+#followButton{
+background: linear-gradient(#E3052A, #BF0826);
+width: 100px;
+height: 40px;
+border-radius: 7px;
+color: #FFFFFF;
+font-size: 20px;
+border-style:none;
+z-index:1;
+}
 #boards{
 width:65%;
 height:100%;
@@ -417,5 +489,36 @@ color: #00B7FF;
 	font-size: 20px;
 	border-style:none;
 }
+#settingsForm{
+font-size:24px;
+padding:10px 10px 10px 10px;
+}
+#settingsForm input[type="text"]{
+width:300px;
+height:25px;
+font-size:20px;
+margin-left:auto;
+margin-right:auto;
+}
 
+#settingsForm input[type="submit"]{
+padding-top:100px;
+padding-bottom:100px;
+width:200px;
+margin-left:auto;
+margin-right:auto;
+}
 
+#formBox{
+margin-bottom:20px;
+margin-left:auto;
+margin-right:auto;
+width:40%;
+height:70%;
+background-color:#FFFFFF;
+border-radius:5px;
+border-style:solid;
+border-thickness:1px;
+border-color:rgba(0, 0, 255, 0.6);
+box-shadow:4px 4px 2px #888888;
+}

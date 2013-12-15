@@ -73,7 +73,25 @@ function get_profile(res,id) {
             }
           }); // end oracle.connect
         }
-
+exports.follow = function(req, res){
+	var followed = req.body.followed;
+	var follower = 109; //replace this with session user
+	oracle.connect(connectData, function(err, connection){
+		if(err) {console.log(err);}
+		else{
+			var query = "INSERT INTO FOLLOWERS (FOLLOWED, FOLLOWING) VALUES " +
+					"('" + followed + "', '" + follower + "'";
+			console.log(query);
+			connection.execute(query, [], function(err, results){
+				if(err) {console.log(err);}
+				else{
+					res.end();
+					connection.close();
+				}
+			});
+		}
+	});
+}
 exports.user = function(req, res){
 	//console.log(req.query["userID"]);
 	if( (typeof req.query.userID) != 'undefined') {

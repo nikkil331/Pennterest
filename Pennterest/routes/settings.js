@@ -1,0 +1,68 @@
+/**
+ * New node file
+ */
+
+var connectData = {
+		"hostname": "cis550zne.cbh8gmdnynf7.us-east-1.rds.amazonaws.com",
+		"user": "zne",
+		"password": "jacksonf",
+		"database": "PENNZNE"
+	};
+
+var oracle =  require("oracle");
+var userID;
+exports.settings = function(req, res){
+	userID = req.query["userID"];
+	oracle.connect(connectData, function(err, connection) {
+		if ( err ) {
+			console.log(err);
+		} else {
+			var query = "SELECT USERID, FIRSTNAME, LASTNAME, GENDER, BIO, AFFILIATION, EMAIL, " +
+    		"PROFILEPICPATH, TO_CHAR(DOB, 'MM / DD / YYYY') AS DOB " +
+    		"FROM USERS WHERE USERID=" + req.query["userID"];
+			console.log(query);
+			connection.execute(query, [], function(err, results){
+				if(err){console.log(err);}
+				else{
+					res.render('settings.ejs',
+							{user: results}
+							);
+				}
+			});
+		}
+	});
+}
+
+exports.change = function(req, res){
+	oracle.connect(connectData, function(err, connection){
+		if(err) {console.log(err);}
+		else{
+			var firstName = req.body.firstName;
+			var lastName = req.body.lastName;
+			var email = req.body.email;
+			var dob = req.body.dob;
+			var gender = req.body.gender;
+			var bio = req.body.bio;
+			var affiliation = req.body.affiliation;
+			var profilepic = req.body.profilepic;
+			var query = "UPDATE USERS " +
+					"SET FIRSTNAME = '" + firstName +
+					"', LASTNAME = '" + lastName +
+					"', EMAIL = '" + email +
+					"', DOB = TO_DATE('" + dob + "', 'MM/DD/YYYY')" +
+					", GENDER = '" + gender +
+					"', BIO = '" + bio +
+					"', AFFILIATION = '" + req.body.affiliation +
+					"', PROFILEPICPATH = '" + req.body.profilepic + 
+					"' WHERE USERID = " + userID;
+			console.log(query);
+			connection.execute(query, [], function(err, results){
+				if(err ){console.log(err);}
+				else{
+					res.end();
+					connection.close();
+				}
+			});
+		}
+	});
+}
