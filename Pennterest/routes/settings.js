@@ -61,7 +61,7 @@ exports.change = function(req, res){
 			connection.execute(query, [], function(err, results){
 				if(err ){console.log(err);}
 				else{
-					res.end();
+					res.redirect("/user?userID=" + req.session.user.USERID);
 					connection.close();
 				}
 			});

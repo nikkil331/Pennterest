@@ -216,6 +216,9 @@ function pinContent(data){
 				console.log("tags.length > 0");
 				addTags(data);
 			}
+			else{
+				data["response"].end();
+			}
 		}
 	});
 }

@@ -21,7 +21,7 @@ Pennterest
 </div>
 
 <div id="formBox">
-<form id="settingsForm" method="POST" action="/changeSettings" target="hidden-iframe">
+<form id="settingsForm" method="POST" action="/changeSettings">
 <% 
 var firstName = user[0].FIRSTNAME;
 var lastName = user[0].LASTNAME;
@@ -84,7 +84,7 @@ F<input type="radio" name="gender" value="F" checked="<%=isFemale%>"></td>
 <td><input name="profilepic" type="text" value="<%=profilepic%>"></td>
 </tr>
 </table>
-<div style="text-align:center"><input type="submit" value="Apply Changes"></div>
+<div style="text-align:center"><input type="submit" value="Apply Changes")"></div>
 </form>
 </div>
 <iframe id="hidden-iframe" style="display:none"></iframe>

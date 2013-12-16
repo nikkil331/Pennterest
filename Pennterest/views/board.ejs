@@ -136,7 +136,7 @@ then start pinning!<br/><br/><br/>
 </div>
 
 <div class="popUp" id="pinPopup" style="visibility:hidden">
-<form id="pinForm" action="/addPin" method="POST" target="hidden-iframe">
+<form id="pinForm" action="/pinExisting" method="POST" target="hidden-iframe">
 Choose Board <br/>
 <select name="boardName" form="pinForm">
 <% for(var i = 0; i < boards.length; i++) {

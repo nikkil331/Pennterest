@@ -84,7 +84,7 @@ exports.follow = function(req, res){
 	oracle.connect(connectData, function(err, connection){
 		if(err) {console.log(err);}
 		else{
-			var query = "INSERT INTO FOLLOWERS (FOLLOWED, FOLLOWING) VALUES " +
+			var query = "INSERT INTO FOLLOWING (FOLLOWED, FOLLOWER) VALUES " +
 					"('" + followed + "', '" + follower + "')";
 			console.log(query);
 			connection.execute(query, [], function(err, results){

@@ -78,7 +78,7 @@ Pennterest
 </div>
 <table id="feed">
 <tr>
-<% if(pins.length == 0) { %> No Results <% } %>
+<% if(pins.length == 0) { %> <div style="margin-left:10px;">No Results</div> <% } %>
 <% for(var i = 0; i < pins.length; i++) { %>
       <% if(i % 4 == 0 && i != 0) { %> </tr><tr> <% } %>
       <td>
