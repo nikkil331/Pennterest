@@ -371,15 +371,22 @@ function download_file_wget(file_url, contentid, connection) {
 
 	var child = exec(wget, function(err, stdout, stderr) {
 		if (err) {throw err;}
-		else { 
-			console.log(file_name + ' downloaded to ' + DOWNLOAD_DIR + ' as '+contentid+'.'+ext);
-			var cache = "UPDATE CONTENT SET CACHED='1' WHERE CONTENTID='"+contentid+"' ";
-			connection.execute(cache, [], function(err, results){
-				if(err) {console.log(err);}
-				else{
-					console.log("successfully updated cache entry for content "+contentid);
+		else {
+			oracle.connect(connectData, function(err, connection) {
+				if ( err ) {
+					console.log(err);
+				} else {
+					console.log(file_name + ' downloaded to ' + DOWNLOAD_DIR + ' as '+contentid+'.'+ext);
+					var cache = "UPDATE CONTENT SET CACHED='1' WHERE CONTENTID='"+contentid+"' ";
+					connection.execute(cache, [], function(err, results){
+						if(err) {console.log(err);}
+						else{
+							console.log("successfully updated cache entry for content "+contentid);
+						}
+					});
 				}
 			});
+			
 		}
 	});
 }
