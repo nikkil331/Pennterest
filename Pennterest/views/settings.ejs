@@ -33,6 +33,8 @@ var gender = user[0].GENDER;
 if(gender == null || gender == 'undefined') {gender = 'F'; }
 var affiliation = user[0].AFFILIATION;
 if(affiliation == null || affiliation == 'undefined') { affiliation = ""; }
+var interests = user[0].INTERESTS;
+if(interests == null || interests == 'undefined') {interests = "";}
 var bio = user[0].BIO;
 if(bio == null || bio == 'undefined') { bio = ""; }
 var profilepic = user[0].PROFILEPICPATH;
@@ -74,6 +76,14 @@ F<input type="radio" name="gender" value="F" checked="<%=isFemale%>"></td>
 <tr>
 <td>Affiliation</td>
 <td> <input name="affiliation" type="text" value="<%=affiliation%>"> </td>
+</tr>
+<tr>
+<td>
+Interests
+</td>
+<td>
+<textarea name="interests" style="width:300px;height:150px"><%=interests%></textarea>
+</td>
 </tr>
 <tr>
 <td>About Me</td>
