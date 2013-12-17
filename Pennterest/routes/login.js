@@ -27,12 +27,14 @@ exports.login = function(req, res){
 exports.postLogin = function(req, res){
 	if (req.param('email') != null && req.param('pass') != null) {
 		// attempt manual login //
+		var start = new Date().getTime();
 		account.manualLogin(req.param('email'), req.param('pass'), function(e, u){
 			if (!u){
 				res.redirect('/login?err=1');
 				//res.send(e, 400);
 			}
 			else {
+				console.log("LOGIN TIME: " + (new Date().getTime() - start));
 				req.session.user = u;
 				if (req.param('remember-me') === 'true'){
 					res.cookie('user', u.user, { maxAge: 900000 });

@@ -22,10 +22,11 @@ exports.settings = function(req, res){
 			var query = "SELECT USERID, FIRSTNAME, LASTNAME, GENDER, BIO, AFFILIATION, EMAIL, " +
     		"PROFILEPICPATH, TO_CHAR(DOB, 'MM / DD / YYYY') AS DOB " +
     		"FROM USERS WHERE USERID=" + req.session.user.USERID;
-			console.log(query);
+			var start = new Date().getTime();
 			connection.execute(query, [], function(err, results){
 				if(err){console.log(err);}
 				else{
+					console.log("GET USER SETTINGS TIME: " + (new Date().getTime() - start));
 					res.render('settings.ejs',
 							{user: results}
 							);
@@ -57,10 +58,11 @@ exports.change = function(req, res){
 					"', AFFILIATION = '" + req.body.affiliation +
 					"', PROFILEPICPATH = '" + req.body.profilepic + 
 					"' WHERE USERID = " + req.session.user.USERID;
-			console.log(query);
+			var start = new Date().getTime();
 			connection.execute(query, [], function(err, results){
 				if(err ){console.log(err);}
 				else{
+					console.log("UPDATE SETTINGS TIME: " + (new Date().getTime() - start));
 					res.redirect("/user?userID=" + req.session.user.USERID);
 					connection.close();
 				}

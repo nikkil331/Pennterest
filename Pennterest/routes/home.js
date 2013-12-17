@@ -28,7 +28,6 @@ function getPins_db(res, id, req) {
 			" GROUP BY c.CONTENTPATH, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG)" +
 			" GROUP BY PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING ORDER BY PINID DESC)" +
 			" WHERE ROWNUM <= 8)";
-			console.log(userPins);
 			connection.execute(userPins, [],
 					function(err, uresults){
 				if(err) {console.log(err); }
@@ -55,7 +54,6 @@ function getSuggestions(uresults, id, connection,res, req){
 	" ORDER BY p.PINID) " +
 	" GROUP BY PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING ORDER BY PINID DESC) " +
 	" WHERE ROWNUM <= 10)";
-	console.log(interestsPins);
 	//first 10 pins of people the user is following
 	var followedsPins = "(SELECT * FROM " +
 	"(SELECT PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING, " +
@@ -68,15 +66,16 @@ function getSuggestions(uresults, id, connection,res, req){
 	" GROUP BY c.CONTENTPATH, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG) " +
 	" GROUP BY PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING ORDER BY PINID DESC)" +
 	" WHERE ROWNUM <= 10) ";
-	console.log(followedsPins);
 	var query = "( " + interestsPins + " ) UNION (" + followedsPins + " )";
 
+	var start = new Date().getTime();
 	connection.execute(query,
 			[],
 			function(err, presults) {
 		if ( err ) {
 			console.log(err);
 		} else {
+			console.log("GET HOME CONTENT TIME: " + (new Date().getTime() - start));
 			getBoardNames(uresults, presults, id, connection, res, req);
 		}
 	});
@@ -90,7 +89,6 @@ function getBoardNames(uresults, presults, id, connection, res, req){
 		if(err) {console.log(err);}
 		else {
 			if(req.session.user != null) {
-				console.log(req.session.user);
 				res.render('home.ejs',
 					{userID : req.session.user.USERID,
 					boards : bresults,
@@ -116,17 +114,17 @@ exports.home = function(req, res){
 
 //adds new rating
 exports.update = function(req, res){
-	console.log("updating...");
 	oracle.connect(connectData, function(err, connection) {
 		if ( err ) {
 			console.log(err);
 		} else {
 			var query = "SELECT PINID, USERID FROM PINRATING" +
 			" WHERE PINID = " + req.body.pinID + " AND USERID = " + req.session.user.USERID;
+			var start = new Date().getTime();
 			connection.execute(query, [],
 					function(err, results) {
 				if ( err ) {
-					console.log(err + " second error");
+					console.log(err);
 				} else {
 					var insertRating;
 					if(results.length > 0){
@@ -137,15 +135,17 @@ exports.update = function(req, res){
 						insertRating = "INSERT INTO PINRATING (USERID, PINID, RATING) VALUES " +
 						"(" + req.session.user.USERID + ", " + req.body.pinID + ", " + req.body.rating + ")";
 					}
-					console.log(insertRating);
 					connection.execute(insertRating,
 							[],
 							function(err, results) {
 						if ( err ) {
-							console.log(err + " third error");
+							console.log(err);
+							res.end();
 						}
 						else{
+							console.log("UPDATE RATING TIME: " + (new Date().getTime() - start));
 							connection.close();
+							res.end();
 						}
 					});
 				}
@@ -159,12 +159,12 @@ exports.update = function(req, res){
 exports.pinExisting = function(req, res){
 	var description = req.body.description;
 	var tags = getTags(description);
-	console.log(tags);
 	var contentid;
 	oracle.connect(connectData, function(err, connection) {
 		if ( err ) {
 			console.log(err);
 		} else {
+			var start = new Date().getTime();
 			var query = "SELECT CONTENTID FROM PIN WHERE PINID = " + req.body.pinID;
 			console.log(query);
 			connection.execute(query,
@@ -172,9 +172,8 @@ exports.pinExisting = function(req, res){
 					function(err, results){
 				if(err) {console.log(err);}
 				else{
-					console.log("now to pin...");
 					var data = {"contentid":results[0]["CONTENTID"], "userid":req.session.user.USERID, "boardname":req.body.boardName, 
-							"description":req.body.description, "tags":tags, "connection":connection, "response":res};
+							"description":req.body.description, "tags":tags, "connection":connection, "response":res, "time":start};
 					pinContent(data);
 				}
 			});
@@ -207,24 +206,23 @@ function pinContent(data){
 	var query = "INSERT INTO PIN (USERID, CONTENTID, BOARDNAME, CAPTION, PINID) VALUES" +
 	" (" + data["userid"] + ", " + data["contentid"] + ", \'" + data["boardname"] +
 	"\', '" + data["description"] + "' " + ", seq_pin_id.nextval)";
-	console.log(query);
 	data["connection"].execute(query, [],
 			function(err, results){
 		if(err) { console.log(err); }
 		else{
 			if(data["tags"].length > 0){
-				console.log("tags.length > 0");
 				addTags(data);
 			}
 			else{
+				console.log("PIN TIME (NO TAGS): " + (new Date().getTime() - data["time"]))
 				data["response"].end();
+				data["connection"].close();
 			}
 		}
 	});
 }
 
 function addTags (data){
-	console.log('adding tags...');
 	for(var i = 0; i < data["tags"].length; i++){
 		getTagId(data, i);
 	}
@@ -232,12 +230,9 @@ function addTags (data){
 }
 
 function getTagId(data, index){
-	console.log('getting tag ids...');
 	query = "SELECT TAGID FROM TAG WHERE TAG='" + data["tags"][index] + "'";
-	console.log(query);
 	data["connection"].execute(query, [],
 			function(err, results){
-		console.log(results);
 		if(err) {console.log(err);}
 		if(results.length > 0){
 			insertContentTag(data, results[0]["TAGID"], index);
@@ -249,16 +244,15 @@ function getTagId(data, index){
 }
 
 function insertContentTag (data, tagid, index){
-	console.log('inserting content tag');
 	query = "INSERT INTO CONTENTTAG (TAGID, CONTENTID) VALUES (" + tagid +
 	", " + data["contentid"] + ")";
-	console.log(query);
 	data["connection"].execute(query,
 			[],
 			function(err,insertRes){
 		if(err) {console.log(err);}
 		if(index == data["tags"].length-1){
 			data["connection"].close();
+			console.log("PIN TIME (W/ TAGS): " + (new Date().getTime() - data["time"]));
 		}
 	});
 }
@@ -268,16 +262,12 @@ function insertTag(data, tag, index){
 	oracle.connect(connectData, function(err, connection){
 		var query = "INSERT INTO TAG (TAGID, TAG) VALUES (seq_tag_id.nextval, '" +
 		tag + "')";
-		console.log(query);
 		connection.execute(query,
 				[],
 				function(err, insertRes){
-			console.log(insertRes);
 			if(err) {console.log(err);}
 			else{
-				console.log(insertRes);
 				query = "INSERT INTO CONTENTTAG (TAGID, CONTENTID) VALUES (seq_tag_id.currval, " + data["contentid"] + ")";
-				console.log(query);
 				connection.execute(query,
 						[],
 						function(err, results){
@@ -285,6 +275,7 @@ function insertTag(data, tag, index){
 					connection.close();
 					if(index == data["tags"].length-1){
 						data["connection"].close();
+						console.log("PIN TIME (W/ TAGS): " + (new Date().getTime() - data["time"]));
 					}
 				});
 			}
@@ -300,18 +291,15 @@ exports.pinNewContent = function(req, res){
 	oracle.connect(connectData, function(err, connection){
 		var query = "SELECT p.PINID FROM PIN p, CONTENT c WHERE c.CONTENTPATH = '" + url +
 		"' AND p.CONTENTID=c.CONTENTID";
-		console.log(query);
 		connection.execute(query, [], function(err, results){
-			if(err) {console.log(err + " first err");}
+			if(err) {console.log(err);}
 			else{
 				//new content
 				if(results.length === 0){
-					console.log("new content");
 					addContent(req, res, connection);
 				}
 				//old content, use pinExisting()
 				else{
-					console.log("old content");
 					var body = {};
 					body["boardName"] = boardName;
 					body["description"] = description;
@@ -327,19 +315,17 @@ exports.pinNewContent = function(req, res){
 
 function addContent(req, res, connection){
 	var query = "INSERT INTO CONTENT (CONTENTID, CONTENTPATH) VALUES (seq_content_id.nextval, '" + req.body.url + "')";
-	console.log(query);
+	var start = new Date().getTime();
 	connection.execute(query, [], function(err, results){
-		if(err) {console.log(err + " second err");}
+		if(err) {console.log(err);}
 		else{
 			var tags = getTags(req.body.description);
 			query = "SELECT seq_content_id.currval FROM DUAL";
-			console.log(query);
 			connection.execute(query, [], function(err, cid){
 				if(err) {console.log(err);}
 				else{
-					console.log(cid);
 					var data = {"contentid":cid[0]["CURRVAL"], "userid":req.session.user.USERID, "boardname":req.body.boardName,
-							"description":req.body.description, "tags":tags, "connection":connection, "response":res};
+							"description":req.body.description, "tags":tags, "connection":connection, "response":res, "time":start};
 					pinContent(data);
 				}
 			});

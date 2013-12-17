@@ -31,18 +31,17 @@ exports.getBoardContent = function(req, res){
 			" AND c.CONTENTID = ct.CONTENTID(+) AND ct.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
 			" GROUP BY c.CONTENTPATH, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG)" +
 			" GROUP BY PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING ORDER BY PINID DESC";
-			console.log(query);
+			var start = new Date().getTime();
 			connection.execute(query, [], function(err, cresults){
 				if(err) {console.log(err);}
 				else{
-					console.log(cresults);
 					query = "SELECT BOARDNAME FROM BOARD WHERE USERID=" + suserID;
-					console.log(query);
 				  	connection.execute(query,
 				  			[],
 				  			function(err, bresults){
 				  			if(err) {console.log(err);}
 				  			else{
+				  				console.log("GET BOARD CONTENT TIME: " + (new Date().getTime() - start));
 				  				if(req.session.user != null){				  		    	
 				  					res.render('board.ejs',
 				  		    			{userID : suserID,  
