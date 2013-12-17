@@ -297,6 +297,7 @@ exports.pinNewContent = function(req, res){
 			if(err) {console.log(err);}
 			else{
 				//new content
+				console.log("There are already "+results.length+" of these in the DB");
 				if(results.length === 0){
 					addContent(req, res, connection);
 				}
@@ -313,7 +314,7 @@ exports.pinNewContent = function(req, res){
 					body["userID"] = userID;
 					body["pinID"] = results[0].PINID;
 					var data = {"body" : body};
-					pinExisting(data, res);
+					exports.pinExisting(data, res);
 				}
 			}
 		});
