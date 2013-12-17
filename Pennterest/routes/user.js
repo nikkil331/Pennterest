@@ -15,32 +15,32 @@ var connectData = {
                   "database": "PENNZNE" };
 var oracle =  require("oracle");
 
-function getFriendNames(results, displayed, viewer, connection, res){
-        query = "SELECT u.FIRSTNAME, u.LASTNAME, u.USERID, u.PROFILEPICPATH FROM FOLLOWING f, USERS u WHERE f.FOLLOWER=" + displayed + " AND f.FOLLOWED = u.USERID";
+function getFriendNames(results, displayed, viewer, connection, res, start){
+        query = "SELECT u.FIRSTNAME, u.LASTNAME, u.USERID, u.PROFILEPICPATH FROM FOLLOWING f, USERS u WHERE f.FOLLOWER=" + 
+        displayed + " AND f.FOLLOWED = u.USERID";
           connection.execute(query,
                           [],
                           function(err, fresults){
                           if(err) {console.log(err);}
                           else{
-                                  getBoardNames(results, fresults, displayed, viewer, connection, res);
+                                  getBoardNames(results, fresults, displayed, viewer, connection, res, start);
                           }
           });
 }
 
-function getBoardNames(results, fresults, displayed, viewer, connection, res){
+function getBoardNames(results, fresults, displayed, viewer, connection, res, start){
         query = "SELECT B.BOARDNAME, " +
         		"MAX(C.CONTENTPATH) KEEP (DENSE_RANK FIRST ORDER BY C.CONTENTID) as CONTENTPATH  " +
         		"FROM BOARD B, CONTENT C, PIN P " +
         		"WHERE B.USERID=" + displayed + " AND B.BOARDNAME = P.BOARDNAME(+) AND " +
         		"P.CONTENTID = C.CONTENTID(+) " +
         		"GROUP BY B.BOARDNAME";
-        console.log(query);
           connection.execute(query,
                           [],
                           function(err, bresults){
                           if(err) {console.log(err);}
                           else{
-                                  console.log(results);
+                              console.log("GET USER PROFILE TIME: " + (new Date().getTime() - start));
                               res.render('user.ejs',
                                             {user : results, 
                                             boards: bresults,
@@ -61,14 +61,13 @@ function get_profile(res, displayed, viewer) {
                     var query = "SELECT USERID, FIRSTNAME, LASTNAME, GENDER, BIO, AFFILIATION, PROFILEPICPATH, " +
                     		"TO_CHAR(DOB, 'MM - DD - YYYY') AS DOB " +
                     		"FROM USERS WHERE USERID=" + displayed;
-                    console.log(query);
+                      var start = new Date().getTime();
                       connection.execute(query,
                                       [],
                                       function(err, results){
-                                      console.log(results);
                                       if(err) {console.log(err);}
                                       else{
-                                          getFriendNames(results, displayed, viewer, connection, res);
+                                          getFriendNames(results, displayed, viewer, connection, res, start);
                                       }
                       });
             }
@@ -86,10 +85,16 @@ exports.follow = function(req, res){
 		else{
 			var query = "INSERT INTO FOLLOWING (FOLLOWED, FOLLOWER) VALUES " +
 					"('" + followed + "', '" + follower + "')";
-			console.log(query);
+			var start = new Date().getTime();
 			connection.execute(query, [], function(err, results){
-				if(err) {console.log(err);}
+				if(err) {
+					//happens when the user is already following them
+					console.log(err);
+					res.end();
+					console.log("FOLLOW TIME: " + (new Date().getTime() - start));
+				}
 				else{
+					console.log("FOLLOW TIME: " + (new Date().getTime() - start));
 					res.end();
 					connection.close();
 				}
@@ -102,7 +107,6 @@ exports.user = function(req, res){
 		get_profile(res, req.query["userID"], req.session.user.USERID);
 	}
 	else if(req.session.user != null) {
-		console.log(req.session.user);
 		get_profile(res, req.session.user.USERID, req.session.user.USERID);
 	}
 	else {
@@ -120,33 +124,31 @@ exports.addNewBoard = function(req, res){
         oracle.connect(connectData, function(err, connection){
                 var query = "SELECT b.BOARDNAME FROM BOARD b WHERE b.USERID = '" + userID + 
                 "' AND b.BOARDNAME= '" + boardName + "'";
-                console.log(query);
+                var start = new Date().getTime();
                 connection.execute(query, [], function(err, results){
-                        if(err) {console.log(err + " first err");}
+                        if(err) {console.log(err);}
                         else{
                                 //new content
                                 if(results.length == 0){
-                                        console.log("new content");
-                                        addBoard(req, res, connection, boardName, userID);
+                                        addBoard(req, res, connection, boardName, userID, start);
                                 }
                                 //old content, use pinExisting()
                                 else{
                                 	res.end();
                                 	connection.close();
-                                        console.log("board already exists for user");
                                 }
                         }
                 });
          });
 }
-function addBoard(req, res, connection, boardName, userID){
+function addBoard(req, res, connection, boardName, userID, start){
         var query = "INSERT INTO BOARD (BOARDNAME,USERID) VALUES ('"+ boardName + "' , " + userID + ")";
         connection.execute(query, [], function(err, results){
-                if(err) {console.log(err + " second err");}
+                if(err) {console.log(err);}
                 else{
-                        console.log("new board made!");
-                        connection.close();
-                        res.redirect('/user?userID=' + userID);
+                	console.log("ADD BOARD TIME: " + (new Date().getTime() - start));
+                	connection.close();
+                	res.redirect('/user?userID=' + userID);
                 }
         });
 }

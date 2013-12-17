@@ -33,20 +33,19 @@ exports.search = function(req, res){
 				"GROUP BY c.CONTENTPATH, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG) " +
 				"GROUP BY PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING ORDER BY PINID) " +
 				"WHERE ROWNUM <= 50";
-			console.log(query);
+			var start = new Date().getTime();
 			connection.execute(query,
 			[],
 			function(err, presults){
 				if(err) { console.log(err); }
 				else{
-					console.log(presults);
 					query = "SELECT BOARDNAME FROM BOARD WHERE USERID=" + req.session.user.USERID;
-					console.log(query);
 		  	    	connection.execute(query,
 		  	    			[],
 		  	    			function(err, bresults){
 		  	    			if(err) {console.log(err);}
 		  	    			else{
+		  	    				console.log("SEARCH TIME: " + (new Date().getTime() - start));
 		  	    		    	res.render('search.ejs',
 		  	    		    			{userID : req.session.user.USERID,  
 		  	    		    			 boards : bresults,
