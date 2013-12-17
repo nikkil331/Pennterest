@@ -291,7 +291,7 @@ exports.pinNewContent = function(req, res){
 	var url = req.body.url;
 	var description = req.body.description;
 	oracle.connect(connectData, function(err, connection){
-		var query = "SELECT p.PINID FROM PIN p, CONTENT c WHERE c.CONTENTPATH = '" + url +
+		var query = "SELECT p.PINID, c.CONTENTID FROM PIN p, CONTENT c WHERE c.CONTENTPATH = '" + url +
 		"' AND p.CONTENTID=c.CONTENTID";
 		connection.execute(query, [], function(err, results){
 			if(err) {console.log(err);}
@@ -300,8 +300,13 @@ exports.pinNewContent = function(req, res){
 				if(results.length === 0){
 					addContent(req, res, connection);
 				}
-				//old content, use pinExisting()
-				else{
+				else if (results.length >= 3) {
+					console.log("HEY, WE SHOULD CACHE THIS");
+					// need to cache this stuff
+					var fname = results[0].CONTENTID;
+					download_file_wget(url, fname, connection);
+				}
+				else { //old content, use pinExisting()
 					var body = {};
 					body["boardName"] = boardName;
 					body["description"] = description;
@@ -335,20 +340,29 @@ function addContent(req, res, connection){
 	});
 }
 
-var download_file_wget = function(file_url, fname) {
-	var DOWNLOAD_DIR = "~/cache/"
-    // extract the file name
-    var file_name = url.parse(file_url).pathname.split('/').pop();
-    var ext = file_name.split('.').pop();
-    // compose the wget command
-    var wget = 'wget -O '+fname+'.'+ext+' -P ' + DOWNLOAD_DIR + ' ' + file_url;
-    // excute wget using child_process' exec function
+function download_file_wget(file_url, contentid, connection) {
+	var DOWNLOAD_DIR = "~/550pennterest/Pennterest/public/cache/";
+	//	extract the file name
+	var file_name = url.parse(file_url).pathname.split('/').pop();
+	var ext = file_name.split('.').pop();
+	//	compose the wget command
+	var wget = 'wget -O '+contentid+'.'+ext+' -P ' + DOWNLOAD_DIR + ' ' + file_url;
+	//	excute wget using child_process' exec function
 
-    var child = exec(wget, function(err, stdout, stderr) {
-        if (err) throw err;
-        else console.log(file_name + ' downloaded to ' + DOWNLOAD_DIR);
-    });
-};
+	var child = exec(wget, function(err, stdout, stderr) {
+		if (err) {throw err;}
+		else { 
+			console.log(file_name + ' downloaded to ' + DOWNLOAD_DIR + ' as '+contentid+'.'+ext);
+			var cache = "UPDATE CONTENT SET CACHED='1' WHERE CONTENTID='"+contentid+"' ";
+			connection.execute(cache, [], function(err, results){
+				if(err) {console.log(err);}
+				else{
+					console.log("successfully updated cache entry for content "+contentid);
+				}
+			});
+		}
+	});
+}
 
 
 
