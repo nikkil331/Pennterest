@@ -350,7 +350,7 @@ function download_file_wget(file_url, contentid, connection) {
 	var file_name = url.parse(file_url).pathname.split('/').pop();
 	var ext = file_name.split('.').pop();
 	//	compose the wget command
-	var wget = 'wget -O '+contentid+'.'+ext+' -P ' + DOWNLOAD_DIR + ' ' + file_url;
+	var wget = 'wget -O '+DOWNLOAD_DIR+contentid+'.'+ext+' '+ file_url;
 	//	excute wget using child_process' exec function
 
 	var child = exec(wget, function(err, stdout, stderr) {
