@@ -301,7 +301,7 @@ exports.pinNewContent = function(req, res){
 				if(results.length === 0){
 					addContent(req, res, connection);
 				}
-				else if (results.length >= 3) {
+				else if (results.length >= 2) {
 					console.log("HEY, WE SHOULD CACHE THIS");
 					// need to cache this stuff
 					var fname = results[0].CONTENTID;
@@ -314,6 +314,9 @@ exports.pinNewContent = function(req, res){
 					body["userID"] = userID;
 					body["pinID"] = results[0].PINID;
 					var data = {"body" : body};
+					data.session = {};
+					data.session.user = {};
+					data.session.user.USERID = userID;
 					exports.pinExisting(data, res);
 				}
 			}
