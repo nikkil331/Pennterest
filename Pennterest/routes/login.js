@@ -40,8 +40,32 @@ exports.postLogin = function(req, res){
 					res.cookie('user', u.user, { maxAge: 900000 });
 					res.cookie('pass', u.pass, { maxAge: 900000 });
 				}
-				res.redirect('/home')
+				res.redirect('/home');
 				//res.send(u, 200);
+			}
+		});
+	}
+};
+
+exports.postRegister = function(req, res){
+	if (req.param('email') != null && req.param('pass') != null && req.param('fname') != null) {
+		// attempt adding user //
+		account.addNewAccount(req.param('email'), req.param('pass'), req.param('fname'), function(e, u){
+			if (e == 'email-taken'){
+				res.redirect('/login?err=3');
+				//res.send(e, 400);
+			}
+			else if (e == 'success'){
+				console.log("Account added for "+req.param('email'));
+				account.manualLogin(req.param('email'), req.param('pass'), function(e, u){
+					if (u){
+						req.session.user = u;
+						res.redirect('/home?n=1');
+					}
+					else {
+						res.redirect('/login?err=regfail');
+					}
+				});
 			}
 		});
 	}

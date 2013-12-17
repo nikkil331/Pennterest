@@ -11,6 +11,8 @@ var connectData = {
 	};
 
 var oracle =  require("oracle");
+var url = require("url");
+var exec = require('child_process').exec;
 
 function getPins_db(res, id, req) {
 	oracle.connect(connectData, function(err, connection) {
@@ -19,14 +21,14 @@ function getPins_db(res, id, req) {
 		} else {
 			//user's first 5 pins
 			var userPins = "(SELECT * FROM " +
-			"(SELECT PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING," +
+			"(SELECT PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, CACHED, CONTENTID, RATING, " +
 			"  LISTAGG(TAG, ' #') WITHIN GROUP (ORDER BY TAG) as tags FROM " +
-			"(SELECT c.CONTENTPATH, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG, AVG(pr.RATING) as RATING " +
+			"(SELECT c.CONTENTPATH, c.CACHED, c.CONTENTID, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG, AVG(pr.RATING) as RATING " +
 			"FROM PIN p, CONTENT c, USERS u, CONTENTTAG ct, TAG t, PINRATING pr " +
 			"WHERE p.USERID=" +id+ " AND p.CONTENTID = c.CONTENTID AND u.USERID=" +id +
 			" AND c.CONTENTID = ct.CONTENTID(+) AND ct.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
-			" GROUP BY c.CONTENTPATH, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG)" +
-			" GROUP BY PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING ORDER BY PINID DESC)" +
+			" GROUP BY c.CONTENTPATH, c.CACHED, c.CONTENTID, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG)" +
+			" GROUP BY PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, CACHED, CONTENTID, RATING ORDER BY PINID DESC)" +
 			" WHERE ROWNUM <= 8)";
 			connection.execute(userPins, [],
 					function(err, uresults){
@@ -43,22 +45,22 @@ function getPins_db(res, id, req) {
 function getSuggestions(uresults, id, connection,res, req){
 	//first 10 pins tagged with user's interests
 	var interestsPins = "(SELECT * FROM " +
-	"(SELECT PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING," +
+	"(SELECT PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, CACHED, CONTENTID, RATING," +
 	" LISTAGG(TAG, ' #') WITHIN GROUP (ORDER BY TAG) as tags FROM " +
-	"(SELECT c.CONTENTPATH, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG, AVG(pr.RATING) as RATING " +
+	"(SELECT c.CONTENTPATH, c.CACHED, c.CONTENTID, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG, AVG(pr.RATING) as RATING " +
 	"FROM PIN p, CONTENTTAG ct1, CONTENTTAG ct2, TAG t, INTERESTED i, USERS u, CONTENT c, PINRATING pr " +
 	"WHERE p.CONTENTID = ct1.CONTENTID AND i.TAGID = ct1.TAGID AND i.USERID =" + id +
 	" AND p.CONTENTID = c.CONTENTID AND u.USERID = p.USERID AND u.USERID <> " + id +
 	" AND p.CONTENTID = ct2.CONTENTID(+) AND ct2.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
-	" GROUP BY c.CONTENTPATH, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG" +
+	" GROUP BY c.CONTENTPATH, c.CACHED, c.CONTENTID, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG" +
 	" ORDER BY p.PINID) " +
 	" GROUP BY PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING ORDER BY PINID, RATING DESC) " +
 	" WHERE ROWNUM <= 10)";
 	//first 10 pins of people the user is following
 	var followedsPins = "(SELECT * FROM " +
-	"(SELECT PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING, " +
+	"(SELECT PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, CACHED, CONTENTID, RATING, " +
 	"  LISTAGG(TAG, ' #') WITHIN GROUP (ORDER BY TAG) as tags FROM " +
-	"(SELECT c.CONTENTPATH, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG, AVG(pr.RATING) as RATING " +
+	"(SELECT c.CONTENTPATH, c.CACHED, c.CONTENTID, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG, AVG(pr.RATING) as RATING " +
 	"FROM PIN p, CONTENT c, USERS u, FOLLOWING f, CONTENTTAG ct, TAG t, PINRATING pr " +
 	"WHERE f.FOLLOWER = " +id + " AND p.USERID = f.FOLLOWED " +
 	"AND p.CONTENTID = c.CONTENTID AND u.USERID = f.FOLLOWED " +
@@ -172,6 +174,22 @@ exports.pinExisting = function(req, res){
 					function(err, results){
 				if(err) {console.log(err);}
 				else{
+					var cID = results[0].CONTENTID;
+					var checkpincount = "SELECT c.CONTENTPATH, c.CACHED, COUNT(*) AS count FROM PIN p, CONTENT c WHERE p.CONTENTID=c.CONTENTID AND c.CONTENTID='"+cID+"' GROUP BY c.CONTENTPATH, c.CACHED";
+					console.log(checkpincount);
+					connection.execute(checkpincount,
+							[],
+							function(err, results){
+						if(err) {console.log(err);}
+						else{
+							console.log(results);
+							if(results[0].COUNT >=2 && results[0].CACHED != '1') {
+								console.log("we should cache this");
+								var fname = cID;
+								download_file_wget(results[0].CONTENTPATH, fname, connection);
+							}
+						}
+					});
 					var data = {"contentid":results[0]["CONTENTID"], "userid":req.session.user.USERID, "boardname":req.body.boardName, 
 							"description":req.body.description, "tags":tags, "connection":connection, "response":res, "time":start};
 					pinContent(data);
@@ -289,24 +307,33 @@ exports.pinNewContent = function(req, res){
 	var url = req.body.url;
 	var description = req.body.description;
 	oracle.connect(connectData, function(err, connection){
-		var query = "SELECT p.PINID FROM PIN p, CONTENT c WHERE c.CONTENTPATH = '" + url +
+		var query = "SELECT p.PINID, c.CONTENTID FROM PIN p, CONTENT c WHERE c.CONTENTPATH = '" + url +
 		"' AND p.CONTENTID=c.CONTENTID";
 		connection.execute(query, [], function(err, results){
 			if(err) {console.log(err);}
 			else{
 				//new content
+				console.log("There are already "+results.length+" of these in the DB");
 				if(results.length === 0){
 					addContent(req, res, connection);
 				}
-				//old content, use pinExisting()
-				else{
+				else if (results.length >= 2) {
+					console.log("HEY, WE SHOULD CACHE THIS");
+					// need to cache this stuff
+					var fname = results[0].CONTENTID;
+					download_file_wget(url, fname, connection);
+				}
+				else { //old content, use pinExisting()
 					var body = {};
 					body["boardName"] = boardName;
 					body["description"] = description;
 					body["userID"] = userID;
 					body["pinID"] = results[0].PINID;
 					var data = {"body" : body};
-					pinExisting(data, res);
+					data.session = {};
+					data.session.user = {};
+					data.session.user.USERID = userID;
+					exports.pinExisting(data, res);
 				}
 			}
 		});
@@ -329,6 +356,37 @@ function addContent(req, res, connection){
 					pinContent(data);
 				}
 			});
+		}
+	});
+}
+
+function download_file_wget(file_url, contentid, connection) {
+	var DOWNLOAD_DIR = "~/550pennterest/Pennterest/public/cache/";
+	//	extract the file name
+	var file_name = url.parse(file_url).pathname.split('/').pop();
+	var ext = file_name.split('.').pop();
+	//	compose the wget command
+	var wget = 'wget -O '+DOWNLOAD_DIR+contentid+'.'+ext+' '+ file_url;
+	//	excute wget using child_process' exec function
+
+	var child = exec(wget, function(err, stdout, stderr) {
+		if (err) {throw err;}
+		else {
+			oracle.connect(connectData, function(err, connection) {
+				if ( err ) {
+					console.log(err);
+				} else {
+					console.log(file_name + ' downloaded to ' + DOWNLOAD_DIR + ' as '+contentid+'.'+ext);
+					var cache = "UPDATE CONTENT SET CACHED='1' WHERE CONTENTID='"+contentid+"' ";
+					connection.execute(cache, [], function(err, results){
+						if(err) {console.log(err);}
+						else{
+							console.log("successfully updated cache entry for content "+contentid);
+						}
+					});
+				}
+			});
+			
 		}
 	});
 }
