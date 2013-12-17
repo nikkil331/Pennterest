@@ -45,10 +45,37 @@ body {
   float: right;
   margin-right: 13px;
 }
-#login-container #forgot-password {
-  float: left;
-  margin-left: 10px;
+
+#register-container {
+  width: 340px;
+  margin: 160px auto;
 }
+#register-container label {
+  margin: 15px 0 5px 5px;
+}
+#register-container label.error {
+  color: #801010;
+  margin:0;
+}
+
+#register-container button {
+  width: 150px;
+  padding: 6px 40px 6px 40px;
+  float: left;
+  margin-top: 15px;
+}
+#register-container .checkbox {
+  margin: 23px 0 0 180px;
+}
+#register-container .btm-links {
+  text-align: center;
+  margin-top: 10px;
+}
+#register-container #login {
+  float: right;
+  margin-right: 13px;
+}
+
 #account-form-container {
   width: 460px;
   margin: 100px auto;
