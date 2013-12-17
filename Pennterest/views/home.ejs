@@ -97,7 +97,16 @@ Pennterest
 <div class="upinDisplay">
       <div onmouseover="showRating('<%="urate" + i%>', this)" 
       onmouseout="hideRating('<%="urate" + i%>', this)">
-      <img id="<%="uimg" + i%>" src ="<%= upins[i].CONTENTPATH %>"></br>
+      <%console.log(upins[i])%>
+      <% if (upins[i].CACHED == '1') {
+      	var file_name = (upins[i].CONTENTPATH).split('/').pop();
+		var ext = file_name.split('.').pop();
+      %>
+      <img id="<%="img" + i%>" src ="/cache/<%= upins[i].CONTENTID %>.<%=ext%>"></br>
+      <% } else {%>
+      <img id="<%="img" + i%>" src ="<%= upins[i].CONTENTPATH %>"></br>
+      <% } %>
+      
       <div class='rate' id="<%="urate" + i%>">
       <span style="line-height:40px; vertical-align:center">Rate</span>
       <%var formID = "uratingForm" + i%>
@@ -139,7 +148,14 @@ Pennterest
       <div class="pinDisplay">
       <div onmouseover="showPinButton('<%="button" + i%>', '<%="rate" + i%>', this)" 
       onmouseout="hidePinButton('<%="button" + i%>','<%="rate" + i%>', this)">
+      <% if (pins[i].CACHED == '1') {
+      	var file_name = (pins[i].CONTENTPATH).split('/').pop();
+		var ext = file_name.split('.').pop();
+      %>
+      <img id="<%="img" + i%>" src ="/cache/<%= pins[i].CONTENTID %>.<%=ext%>"></br>
+      <% } else {%>
       <img id="<%="img" + i%>" src ="<%= pins[i].CONTENTPATH %>"></br>
+      <% } %>
       <div class='rate' id="<%="rate" + i%>">
       <span style="line-height:40px; vertical-align:center">Rate</span>
       <%var formID = "ratingForm" + i%>
