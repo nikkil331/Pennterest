@@ -32,7 +32,7 @@ function getPins_db(res, id, req) {
 			" WHERE ROWNUM <= 8)";
 			connection.execute(userPins, [],
 					function(err, uresults){
-				if(err) {console.log(err); }
+				if(err) {console.log(err + "your pins error"); }
 				else{
 					getSuggestions(uresults, id, connection, res, req);
 				}
@@ -54,8 +54,9 @@ function getSuggestions(uresults, id, connection,res, req){
 	" AND p.CONTENTID = ct2.CONTENTID(+) AND ct2.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
 	" GROUP BY c.CONTENTPATH, c.CACHED, c.CONTENTID, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG" +
 	" ORDER BY p.PINID) " +
-	" GROUP BY PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING ORDER BY PINID, RATING DESC) " +
+	" GROUP BY PINID, CACHED, CONTENTID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING ORDER BY PINID, RATING DESC) " +
 	" WHERE ROWNUM <= 10)";
+	console.log(interestsPins);
 	//first 10 pins of people the user is following
 	var followedsPins = "(SELECT * FROM " +
 	"(SELECT PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, CACHED, CONTENTID, RATING, " +
@@ -65,9 +66,10 @@ function getSuggestions(uresults, id, connection,res, req){
 	"WHERE f.FOLLOWER = " +id + " AND p.USERID = f.FOLLOWED " +
 	"AND p.CONTENTID = c.CONTENTID AND u.USERID = f.FOLLOWED " +
 	"AND c.CONTENTID = ct.CONTENTID(+) AND ct.TAGID = t.TAGID(+) AND p.PINID = pr.PINID(+)" +
-	" GROUP BY c.CONTENTPATH, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG) " +
-	" GROUP BY PINID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING ORDER BY PINID, RATING DESC)" +
+	" GROUP BY c.CONTENTPATH, c.CACHED, c.CONTENTID, u.FIRSTNAME, u.USERID, p.BOARDNAME, p.CAPTION, p.PINID, t.TAG) " +
+	" GROUP BY PINID, CACHED, CONTENTID, CONTENTPATH, FIRSTNAME, USERID, BOARDNAME, CAPTION, RATING ORDER BY PINID, RATING DESC)" +
 	" WHERE ROWNUM <= 10) ";
+	console.log(followedsPins);
 	var query = "( " + interestsPins + " ) UNION (" + followedsPins + " )";
 
 	var start = new Date().getTime();
@@ -75,7 +77,7 @@ function getSuggestions(uresults, id, connection,res, req){
 			[],
 			function(err, presults) {
 		if ( err ) {
-			console.log(err);
+			console.log(err + "home error");
 		} else {
 			console.log("GET HOME CONTENT TIME: " + (new Date().getTime() - start));
 			getBoardNames(uresults, presults, id, connection, res, req);
@@ -88,7 +90,7 @@ function getBoardNames(uresults, presults, id, connection, res, req){
 	connection.execute(query,
 			[],
 			function(err, bresults){
-		if(err) {console.log(err);}
+		if(err) {console.log(err + "board error");}
 		else {
 			if(req.session.user != null) {
 				res.render('home.ejs',
