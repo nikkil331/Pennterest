@@ -97,7 +97,6 @@ Pennterest
 <div class="upinDisplay">
       <div onmouseover="showRating('<%="urate" + i%>', this)" 
       onmouseout="hideRating('<%="urate" + i%>', this)">
-      <%console.log(upins[i])%>
       <% if (upins[i].CACHED == '1') {
       	var file_name = (upins[i].CONTENTPATH).split('/').pop();
 		var ext = file_name.split('.').pop();
