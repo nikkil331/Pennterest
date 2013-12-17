@@ -11,6 +11,8 @@ var connectData = {
 	};
 
 var oracle =  require("oracle");
+var url = require("url");
+var exec = require('child_process').exec;
 
 function getPins_db(res, id, req) {
 	oracle.connect(connectData, function(err, connection) {
@@ -332,6 +334,21 @@ function addContent(req, res, connection){
 		}
 	});
 }
+
+var download_file_wget = function(file_url, fname) {
+	var DOWNLOAD_DIR = "~/cache/"
+    // extract the file name
+    var file_name = url.parse(file_url).pathname.split('/').pop();
+    var ext = file_name.split('.').pop();
+    // compose the wget command
+    var wget = 'wget -O '+fname+'.'+ext+' -P ' + DOWNLOAD_DIR + ' ' + file_url;
+    // excute wget using child_process' exec function
+
+    var child = exec(wget, function(err, stdout, stderr) {
+        if (err) throw err;
+        else console.log(file_name + ' downloaded to ' + DOWNLOAD_DIR);
+    });
+};
 
 
 
