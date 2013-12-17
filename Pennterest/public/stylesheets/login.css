@@ -2,19 +2,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background: #f2f9fe;
-  background: -moz-radial-gradient(center, ellipse cover, #f2f9fe 0%, #d6f0fd 100%);
-/* FF3.6+ */
-  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, #f2f9fe), color-stop(100%, #d6f0fd));
-/* Chrome,Safari4+ */
-  background: -webkit-radial-gradient(center, ellipse cover, #f2f9fe 0%, #d6f0fd 100%);
-/* Chrome10+,Safari5.1+ */
-  background: -o-radial-gradient(center, ellipse cover, #f2f9fe 0%, #d6f0fd 100%);
-/* Opera 12+ */
-  background: -ms-radial-gradient(center, ellipse cover, #f2f9fe 0%, #d6f0fd 100%);
-/* IE10+ */
-  background: radial-gradient(center, ellipse cover, #f2f9fe 0%, #d6f0fd 100%);
-/* W3C */
+  background: #eee;
 }
 #login-container {
   width: 340px;
@@ -168,4 +156,15 @@ label {
 }
 button i {
   padding-left: 8px;
+}
+#toolbar {
+	background-color: #CC0000;
+	width: 100%;
+	height: 40px;
+	box-shadow: -1px 10px 5px #CCCCCC;
+	color: #FFFFFF;
+	font-size: 32px;
+	text-align: center;
+	font-family: 'Flamenco', cursive;
+	padding-top:10px;
 }
