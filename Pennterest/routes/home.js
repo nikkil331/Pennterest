@@ -174,6 +174,22 @@ exports.pinExisting = function(req, res){
 					function(err, results){
 				if(err) {console.log(err);}
 				else{
+					var cID = results[0].CONTENTID;
+					var checkpincount = "SELECT c.CONTENTPATH, c.CACHED, COUNT(*) AS count FROM PIN p, CONTENT c WHERE p.CONTENTID=c.CONTENTID AND c.CONTENTID='"+cID+"' GROUP BY c.CONTENTPATH, c.CACHED";
+					console.log(checkpincount);
+					connection.execute(checkpincount,
+							[],
+							function(err, results){
+						if(err) {console.log(err);}
+						else{
+							console.log(results);
+							if(results[0].COUNT >=2 && results[0].CACHED != '1') {
+								console.log("we should cache this");
+								var fname = cID;
+								download_file_wget(results[0].CONTENTPATH, fname, connection);
+							}
+						}
+					});
 					var data = {"contentid":results[0]["CONTENTID"], "userid":req.session.user.USERID, "boardname":req.body.boardName, 
 							"description":req.body.description, "tags":tags, "connection":connection, "response":res, "time":start};
 					pinContent(data);
