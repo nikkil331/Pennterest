@@ -3,7 +3,6 @@
 # Pennterest
 
 Pennterest is a Pinterest clone for the final project of CIS550. 
-We aim to be slightly cooler than Pinterest by allowing users to pin playable music as well as images.
 
 ## Usage
 
